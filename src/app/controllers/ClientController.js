@@ -32,12 +32,14 @@ class ClientController {
       return res.status(400).json({ error: 'Client does not exists' });
     }
 
-    const clientCPFused = await Client.findOne({
-      where: { cpf: req.body.cpf },
-    });
+    if (req.body.cpf) {
+      const clientCPFused = await Client.findOne({
+        where: { cpf: req.body.cpf },
+      });
 
-    if (clientCPFused) {
-      return res.status(400).json({ error: 'CPF already registered' });
+      if (clientCPFused) {
+        return res.status(400).json({ error: 'CPF already registered' });
+      }
     }
 
     await Client.update(req.body, {
