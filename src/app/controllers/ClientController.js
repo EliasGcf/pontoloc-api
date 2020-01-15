@@ -38,7 +38,7 @@ class ClientController {
         where: { cpf: req.body.cpf },
       });
 
-      if (clientCPFused) {
+      if (clientCPFused && clientCPFused.id !== Number(id)) {
         return res.status(400).json({ error: 'CPF already registered' });
       }
     }
