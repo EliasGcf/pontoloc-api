@@ -26,6 +26,7 @@
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-import-helpers": "^1.0.2",
     "eslint-plugin-prettier": "^3.1.0",
     "factory-girl": "^5.0.4",
     "faker": "^4.1.0",
