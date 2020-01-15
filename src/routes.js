@@ -12,6 +12,8 @@ routes.put('/clients/:id', ClientController.update);
 routes.delete('/clients/:id', ClientController.destroy);
 
 routes.post('/items', ItemController.store);
+routes.put('/items/:id', ItemController.update);
+routes.get('/items', ItemController.index);
 
 routes.post('/rents', RentController.store);
 
