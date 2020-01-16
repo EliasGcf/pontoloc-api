@@ -1,6 +1,6 @@
 import request from 'supertest';
-import app from '../../src/app';
 
+import app from '../../src/app';
 import factory from '../factories';
 import truncate from '../util/truncate';
 
@@ -8,7 +8,6 @@ describe('Client', () => {
   beforeEach(async () => {
     await truncate();
   });
-
   describe('Create', () => {
     it('should be able to register a client', async () => {
       const client = await factory.attrs('Client', { cpf: '111.111.111-11' });

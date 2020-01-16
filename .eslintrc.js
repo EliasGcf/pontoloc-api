@@ -27,8 +27,9 @@ module.exports = {
           groups: [
             '/^youch/',
             'module',
-              '/^@shared/',
-              ['parent', 'sibling', 'index'],
+            '/config/',
+            '/^@shared/',
+            ['parent', 'sibling', 'index'],
           ],
           alphabetize: { order: 'asc', ignoreCase: true },
       },
