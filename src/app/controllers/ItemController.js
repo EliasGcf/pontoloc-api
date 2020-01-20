@@ -1,25 +1,25 @@
-import Item from '../models/Item';
+import Material from '../models/Material';
 
 class ItemController {
   async store(req, res) {
-    const { name, price } = req.body;
+    const { name, price_day } = req.body;
 
-    const itemExists = await Item.findOne({ where: { name } });
+    const itemExists = await Material.findOne({ where: { name } });
 
     if (itemExists) {
       return res.status(400).json({ error: 'This item already exists' });
     }
 
-    const { id } = await Item.create({ name, price });
+    const { id } = await Material.create({ name, price_day });
 
-    return res.json({ id, name, price });
+    return res.json({ id, name, price_day });
   }
 
   async update(req, res) {
     const { id } = req.params;
 
     if (req.body.name) {
-      const itemNameExists = await Item.findOne({
+      const itemNameExists = await Material.findOne({
         where: { name: req.body.name },
       });
 
@@ -28,15 +28,15 @@ class ItemController {
       }
     }
 
-    await Item.update(req.body, { where: { id } });
+    await Material.update(req.body, { where: { id } });
 
-    const { name, price } = await Item.findByPk(id);
+    const { name, price } = await Material.findByPk(id);
 
     return res.status(200).json({ name, price });
   }
 
   async index(req, res) {
-    const items = await Item.findAll();
+    const items = await Material.findAll();
 
     return res.json(items);
   }
