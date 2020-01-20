@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 module.exports = {
   up: queryInterface => {
-    return queryInterface.createTable('items', {
+    return queryInterface.createTable('materials', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      price: {
+      price_day: {
         type: Sequelize.DOUBLE,
         allowNull: false,
       },
@@ -30,6 +30,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('items');
+    return queryInterface.dropTable('materials');
   },
 };
