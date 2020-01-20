@@ -1,11 +1,10 @@
 import Sequelize, { Model } from 'sequelize';
 
-class Rent extends Model {
+class Order extends Model {
   static init(sequelize) {
     super.init(
       {
-        amount: Sequelize.INTEGER,
-        rent_price: Sequelize.DOUBLE,
+        price_total_day: Sequelize.DOUBLE,
         returned_at: Sequelize.DATE,
       },
       {
@@ -18,8 +17,7 @@ class Rent extends Model {
 
   static associate(models) {
     this.belongsTo(models.Client, { foreignKey: 'client_id', as: 'client' });
-    this.belongsTo(models.Item, { foreignKey: 'item_id', as: 'item' });
   }
 }
 
-export default Rent;
+export default Order;

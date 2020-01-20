@@ -1,11 +1,11 @@
 import Sequelize, { Model } from 'sequelize';
 
-class Item extends Model {
+class Material extends Model {
   static init(sequelize) {
     super.init(
       {
         name: Sequelize.STRING,
-        price: Sequelize.DOUBLE,
+        price_day: Sequelize.DOUBLE,
       },
       {
         sequelize,
@@ -16,4 +16,4 @@ class Item extends Model {
   }
 }
 
-export default Item;
+export default Material;
