@@ -2,33 +2,26 @@ const Sequelize = require('sequelize');
 
 module.exports = {
   up: queryInterface => {
-    return queryInterface.createTable('order_items', {
+    return queryInterface.createTable('contracts', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         allowNull: false,
         autoIncrement: true,
       },
-      order_id: {
+      client_id: {
         type: Sequelize.INTEGER,
-        references: { model: 'orders', key: 'id' },
+        references: { model: 'clients', key: 'id' },
         allowNull: false,
         onUpdate: 'NO ACTION',
         onDelete: 'NO ACTION',
       },
-      material_id: {
-        type: Sequelize.INTEGER,
-        references: { model: 'materials', key: 'id' },
-        allowNull: false,
-        onUpdate: 'NO ACTION',
-        onDelete: 'NO ACTION',
-      },
-      quantity: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      price_quantity_day: {
+      price_total_day: {
         type: Sequelize.DOUBLE,
+        allowNull: true,
+      },
+      returned_at: {
+        type: Sequelize.DATE,
         allowNull: true,
       },
       created_at: {
@@ -43,6 +36,6 @@ module.exports = {
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('order_items');
+    return queryInterface.dropTable('contracts');
   },
 };

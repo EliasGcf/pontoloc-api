@@ -2,7 +2,7 @@ import Sequelize, { Model } from 'sequelize';
 
 import Material from './Material';
 
-class OrderItems extends Model {
+class ContractItem extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -26,7 +26,10 @@ class OrderItems extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Order, { foreignKey: 'order_id', as: 'order' });
+    this.belongsTo(models.Contract, {
+      foreignKey: 'contract_id',
+      as: 'contract',
+    });
     this.belongsTo(models.Material, {
       foreignKey: 'material_id',
       as: 'material',
@@ -34,4 +37,4 @@ class OrderItems extends Model {
   }
 }
 
-export default OrderItems;
+export default ContractItem;

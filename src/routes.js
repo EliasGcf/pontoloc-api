@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
 import ClientController from './app/controllers/ClientController';
+import ContractController from './app/controllers/ContractController';
 import MaterialController from './app/controllers/MaterialController';
-import OrderController from './app/controllers/OrderController';
 
 const routes = new Router();
 
@@ -15,6 +15,6 @@ routes.post('/materials', MaterialController.store);
 routes.put('/materials/:id', MaterialController.update);
 routes.get('/materials', MaterialController.index);
 
-routes.post('/orders', OrderController.store);
+routes.post('/contracts', ContractController.store);
 
 export default routes;

@@ -1,5 +1,5 @@
 import Client from '../models/Client';
-import Order from '../models/Order';
+import Contract from '../models/Contract';
 
 class ClientController {
   async store(req, res) {
@@ -65,7 +65,7 @@ class ClientController {
       return res.status(400).json({ error: 'Client does not exists' });
     }
 
-    const orderExists = await Order.findOne({ where: { client_id } });
+    const orderExists = await Contract.findOne({ where: { client_id } });
     if (orderExists) {
       return res.status(400).json({ error: 'This client has a rent register' });
     }
