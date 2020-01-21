@@ -5,19 +5,22 @@ import Material from '../models/Material';
 
 class ContractController {
   async store(req, res) {
-    const { client_id, materials } = req.body;
+    const { client_id } = req.body;
 
-    const contract = await Contract.create({ client_id });
+    const clientExists = await Client.findByPk(client_id);
 
-    materials.forEach(async material => {
-      await ContractItem.create({
-        contract_id: contract.id,
-        material_id: material.id,
-        quantity: material.quantity,
-      });
-    });
+    if (!clientExists) {
+      return res.status(400).json({ error: 'Client does not exists' });
+    }
 
-    return res.json(contract);
+    const {
+      id,
+      createdAt,
+      price_total_day,
+      returned_at,
+    } = await Contract.create({ client_id });
+
+    return res.json({ id, client_id, price_total_day, returned_at, createdAt });
   }
 
   async index(req, res) {

@@ -19,6 +19,7 @@ module.exports = {
       price_total_day: {
         type: Sequelize.DOUBLE,
         allowNull: true,
+        defaultValue: 0,
       },
       returned_at: {
         type: Sequelize.DATE,

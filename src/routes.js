@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import ClientController from './app/controllers/ClientController';
 import ContractController from './app/controllers/ContractController';
+import ContractItemController from './app/controllers/ContractItemController';
 import MaterialController from './app/controllers/MaterialController';
 
 const routes = new Router();
@@ -16,7 +17,9 @@ routes.post('/materials', MaterialController.store);
 routes.put('/materials/:id', MaterialController.update);
 
 routes.get('/contracts', ContractController.index);
-routes.get('/contract/:id', ContractController.show);
+routes.get('/contracts/:id', ContractController.show);
 routes.post('/contracts', ContractController.store);
+
+routes.post('/contractItems', ContractItemController.store);
 
 export default routes;
