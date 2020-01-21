@@ -11,10 +11,12 @@ routes.post('/clients', ClientController.store);
 routes.put('/clients/:id', ClientController.update);
 routes.delete('/clients/:id', ClientController.destroy);
 
+routes.get('/materials', MaterialController.index);
 routes.post('/materials', MaterialController.store);
 routes.put('/materials/:id', MaterialController.update);
-routes.get('/materials', MaterialController.index);
 
+routes.get('/contracts', ContractController.index);
+routes.get('/contract/:id', ContractController.show);
 routes.post('/contracts', ContractController.store);
 
 export default routes;
