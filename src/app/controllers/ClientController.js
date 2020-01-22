@@ -1,9 +1,24 @@
+import * as Yup from 'yup';
+
 import Client from '../models/Client';
 import Contract from '../models/Contract';
 
 class ClientController {
   async store(req, res) {
-    /* fazer verificação dos dados via Yup */
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      cpf: Yup.string()
+        .required()
+        .length(14),
+      telefone: Yup.string()
+        .required()
+        .length(11),
+      endereco: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
 
     const clientExists = await Client.findOne({ where: { cpf: req.body.cpf } });
 
@@ -25,6 +40,21 @@ class ClientController {
   }
 
   async update(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      cpf: Yup.string()
+        .required()
+        .length(14),
+      telefone: Yup.string()
+        .required()
+        .length(11),
+      endereco: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
     const { id } = req.params;
 
     const client = await Client.findByPk(id);
@@ -65,8 +95,9 @@ class ClientController {
       return res.status(400).json({ error: 'Client does not exists' });
     }
 
-    const orderExists = await Contract.findOne({ where: { client_id } });
-    if (orderExists) {
+    const contractExists = await Contract.findOne({ where: { client_id } });
+
+    if (contractExists) {
       return res.status(400).json({ error: 'This client has a rent register' });
     }
 

@@ -1,9 +1,21 @@
+import * as Yup from 'yup';
+
 import Contract from '../models/Contract';
 import ContractItem from '../models/ContractItem';
 import Material from '../models/Material';
 
 class ContractItemController {
   async store(req, res) {
+    const schema = Yup.object().shape({
+      contract_id: Yup.number().required(),
+      material_id: Yup.number().required(),
+      quantity: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
     const { contract_id, material_id, quantity } = req.body;
 
     const contractExists = await Contract.findByPk(contract_id);
