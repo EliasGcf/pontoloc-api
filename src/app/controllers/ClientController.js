@@ -10,9 +10,7 @@ class ClientController {
       cpf: Yup.string()
         .required()
         .length(14),
-      telefone: Yup.string()
-        .required()
-        .length(11),
+      telefone: Yup.string().required(),
       endereco: Yup.string().required(),
     });
 
@@ -45,9 +43,7 @@ class ClientController {
       cpf: Yup.string()
         .required()
         .length(14),
-      telefone: Yup.string()
-        .required()
-        .length(11),
+      telefone: Yup.string().required(),
       endereco: Yup.string().required(),
     });
 
