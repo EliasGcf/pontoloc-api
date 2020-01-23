@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "cpf": "^2.0.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
