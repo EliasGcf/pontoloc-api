@@ -8,9 +8,10 @@ describe('Client', () => {
   beforeEach(async () => {
     await truncate();
   });
+
   describe('Create', () => {
     it('should be able to register a client', async () => {
-      const client = await factory.attrs('Client', { cpf: '111.111.111-11' });
+      const client = await factory.attrs('Client');
 
       const response = await request(app)
         .post('/clients')
@@ -32,11 +33,37 @@ describe('Client', () => {
 
       expect(response.status).toBe(400);
     });
+
+    it('should not be able to register a client with invalid data', async () => {
+      const { name, telefone, endereco } = await factory.attrs('Client');
+
+      const response = await request(app)
+        .post('/clients')
+        .send({ name, telefone, endereco });
+
+      expect(response.status).toBe(400);
+    });
   });
 
   describe('Update', () => {
+    it('should be able to edit a client with a database id', async () => {
+      const client = await factory.attrs('Client');
+
+      const response = await request(app)
+        .post('/clients')
+        .send(client);
+
+      const clientEdit = await factory.attrs('Client');
+
+      const editClient = await request(app)
+        .put(`/clients/${response.body.id}`)
+        .send(clientEdit);
+
+      expect(editClient.status).toBe(200);
+    });
+
     it('should not be able to edit a client that does not exist', async () => {
-      const client = await factory.attrs('Client', { cpf: '111.111.111-11' });
+      const client = await factory.attrs('Client');
 
       const response = await request(app)
         .post('/clients')
@@ -49,24 +76,6 @@ describe('Client', () => {
       expect(editClient.body).toStrictEqual({
         error: 'Client does not exists',
       });
-    });
-
-    it('should be able to edit a client with a database id', async () => {
-      const client = await factory.attrs('Client', { cpf: '111.111.111-11' });
-
-      const response = await request(app)
-        .post('/clients')
-        .send(client);
-
-      const clientEdit = await factory.attrs('Client', {
-        cpf: '000.000.000-00',
-      });
-
-      const editClient = await request(app)
-        .put(`/clients/${response.body.id}`)
-        .send(clientEdit);
-
-      expect(editClient.status).toBe(200);
     });
 
     it('should not be able to edit a client with a CPF already used', async () => {
@@ -92,35 +101,58 @@ describe('Client', () => {
 
       expect(editClient.status).toBe(400);
     });
+
+    it('should not be able to edit a client with invalid data', async () => {
+      const client = await factory.attrs('Client');
+
+      const response = await request(app)
+        .post('/clients')
+        .send(client);
+
+      const { name, endereco, cpf } = await factory.attrs('Client');
+
+      const editClient = await request(app)
+        .put(`/clients/${response.body.id}`)
+        .send({ name, endereco, cpf });
+
+      expect(editClient.status).toBe(400);
+    });
   });
 
   describe('List', () => {
     it('it should be able to have a customer list', async () => {
-      const firstClient = await factory.attrs('Client', {
-        cpf: '111.111.111-11',
-      });
+      const [client1, client2] = await factory.attrsMany('Client', 2);
 
       await request(app)
         .post('/clients')
-        .send(firstClient);
-
-      const secondClient = await factory.attrs('Client', {
-        cpf: '222.222.222-22',
-      });
+        .send(client1);
 
       await request(app)
         .post('/clients')
-        .send(secondClient);
+        .send(client2);
 
       const response = await request(app).get('/clients');
 
-      expect(response.body).toHaveLength(2);
+      expect(response.body).toEqual([
+        expect.objectContaining({
+          name: client1.name,
+          telefone: client1.telefone,
+          cpf: client1.cpf,
+          endereco: client1.endereco,
+        }),
+        expect.objectContaining({
+          name: client2.name,
+          telefone: client2.telefone,
+          cpf: client2.cpf,
+          endereco: client2.endereco,
+        }),
+      ]);
     });
   });
 
   describe('Destroy', () => {
     it('should be able to delete a client who has no rent, even the rent has already been returned', async () => {
-      const client = await factory.attrs('Client', { cpf: '111.111.111-11' });
+      const client = await factory.attrs('Client');
 
       const creatResponse = await request(app)
         .post('/clients')
@@ -132,37 +164,27 @@ describe('Client', () => {
       expect(deleteResponse.status).toBe(200);
     });
 
-    it('should be not able to delete a client who does not exists', async () => {
+    it('should not be able to delete a client who does not exists', async () => {
       const deleteResponse = await request(app).delete('/clients/1');
       expect(deleteResponse.status).toBe(400);
     });
 
     it('should not be able to delete a client who has a rent register', async () => {
-      const client = await factory.attrs('Client', { cpf: '111.111.111-11' });
-      const item = await factory.attrs('Item');
+      const client = await factory.attrs('Client');
 
-      const creatClientResponse = await request(app) // cria um client
+      const response = await request(app) // cria um client
         .post('/clients')
         .send(client);
 
-      const creatItemResponse = await request(app) // cria um item
-        .post('/items')
-        .send(item);
+      await request(app) // cria contract
+        .post('/contracts')
+        .send({ client_id: response.body.id });
 
-      const rent = await factory.attrs('Rent', {
-        client_id: creatClientResponse.body.id,
-        item_id: creatItemResponse.body.id,
-      });
-
-      await request(app) // cria rent
-        .post('/rents')
-        .send(rent);
-
-      const deleteClientResponse = await request(app).delete(
-        `/clients/${creatClientResponse.body.id}`
+      const deleteResponse = await request(app).delete(
+        `/clients/${response.body.id}`
       );
 
-      expect(deleteClientResponse.status).toBe(400);
+      expect(deleteResponse.status).toBe(400);
     });
   });
 });

@@ -1,26 +1,34 @@
-import faker from 'faker';
+import { generate } from 'cpf';
 import factory from 'factory-girl';
+import faker from 'faker/locale/pt_BR';
 
 import Client from '../src/app/models/Client';
-import Item from '../src/app/models/Item';
-import Rent from '../src/app/models/Rent';
+import Material from '../src/app/models/Material';
+// import Item from '../src/app/models/Item';
+// import Rent from '../src/app/models/Rent';
 
 factory.define('Client', Client, {
-  name: faker.name.findName(),
-  telefone: faker.phone.phoneNumber(),
-  endereco: faker.address.streetAddress(),
+  name: () => faker.name.findName(),
+  telefone: () => faker.phone.phoneNumber(),
+  endereco: () => faker.address.streetAddress(),
+  cpf: () => generate(),
 });
 
-factory.define('Item', Item, {
+factory.define('Material', Material, {
+  name: () => faker.commerce.product(),
+  price_day: () => faker.commerce.price(),
+});
+
+/* factory.define('Item', Item, {
   name: faker.commerce.product(),
   price: faker.commerce.price(),
-});
+}); */
 
-factory.define('Rent', Rent, {
+/* factory.define('Rent', Rent, {
   // informar o client_id, e item_it na hora de usar
   amount: faker.random.number(),
   rent_price: faker.commerce.price(),
   returned_at: null,
-});
+}); */
 
 export default factory;
