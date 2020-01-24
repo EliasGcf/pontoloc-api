@@ -21,7 +21,7 @@ describe('Client', () => {
     });
 
     it('should not be able to register with duplicated CPF', async () => {
-      const client = await factory.attrs('Client', { cpf: '111.111.111-11' });
+      const client = await factory.attrs('Client');
 
       await request(app)
         .post('/clients')

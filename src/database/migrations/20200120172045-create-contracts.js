@@ -14,7 +14,7 @@ module.exports = {
         references: { model: 'clients', key: 'id' },
         allowNull: false,
         onUpdate: 'NO ACTION',
-        onDelete: 'NO ACTION',
+        onDelete: 'CASCADE',
       },
       price_total_day: {
         type: Sequelize.DOUBLE,
