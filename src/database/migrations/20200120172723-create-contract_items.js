@@ -14,14 +14,14 @@ module.exports = {
         references: { model: 'contracts', key: 'id' },
         allowNull: false,
         onUpdate: 'NO ACTION',
-        onDelete: 'NO ACTION',
+        onDelete: 'CASCADE',
       },
       material_id: {
         type: Sequelize.INTEGER,
         references: { model: 'materials', key: 'id' },
         allowNull: false,
         onUpdate: 'NO ACTION',
-        onDelete: 'NO ACTION',
+        onDelete: 'CASCADE',
       },
       quantity: {
         type: Sequelize.INTEGER,
