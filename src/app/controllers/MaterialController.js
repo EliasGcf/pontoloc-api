@@ -6,6 +6,9 @@ class MaterialController {
 
     const itemExists = await Material.findOne({ where: { name } });
 
+    /*
+     * Check if material already exists
+     */
     if (itemExists) {
       return res.status(400).json({ error: 'This material already exists' });
     }

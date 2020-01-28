@@ -73,9 +73,8 @@ describe('Client', () => {
         .put(`/clients/${response.body.id + 1}`)
         .send(client);
 
-      expect(editClient.body).toStrictEqual({
-        error: 'Client does not exists',
-      });
+      expect(editClient.status).toBe(400);
+      expect(editClient.body.error).toBe('Client does not exists');
     });
 
     it('should not be able to edit a client with a CPF already used', async () => {

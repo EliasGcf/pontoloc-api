@@ -8,12 +8,18 @@ class ContractItemController {
 
     const contractExists = await Contract.findByPk(contract_id);
 
+    /*
+     * Check if contract exists
+     */
     if (!contractExists) {
       return res.status(400).json({ error: 'Contract does not exists' });
     }
 
     const materialExists = await Material.findByPk(material_id);
 
+    /*
+     * Check if material exists
+     */
     if (!materialExists) {
       return res.status(400).json({ error: 'Material does not exists' });
     }
