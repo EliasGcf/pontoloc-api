@@ -9,13 +9,14 @@ class ContractController {
   async store(req, res) {
     const schema = Yup.object().shape({
       client_id: Yup.number().required(),
+      delivery_price: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const { client_id } = req.body;
+    const { client_id, delivery_price } = req.body;
 
     const clientExists = await Client.findByPk(client_id);
 
@@ -28,14 +29,28 @@ class ContractController {
       createdAt,
       price_total_day,
       returned_at,
-    } = await Contract.create({ client_id });
+    } = await Contract.create({ client_id, delivery_price });
 
-    return res.json({ id, client_id, price_total_day, returned_at, createdAt });
+    return res.json({
+      id,
+      client_id,
+      price_total_day,
+      delivery_price,
+      returned_at,
+      createdAt,
+    });
   }
 
   async index(req, res) {
     const contracts = await Contract.findAll({
-      attributes: ['id', 'price_total_day', 'returned_at', 'createdAt'],
+      attributes: [
+        'id',
+        'price_total_day',
+        'delivery_price',
+        'collet_price',
+        'returned_at',
+        'createdAt',
+      ],
       include: [
         {
           model: Client,
@@ -53,12 +68,21 @@ class ContractController {
 
     const {
       price_total_day,
+      delivery_price,
+      collet_price,
       returned_at,
       createdAt,
       client,
     } = await Contract.findOne({
       where: { id },
-      attributes: ['id', 'price_total_day', 'returned_at', 'createdAt'],
+      attributes: [
+        'id',
+        'price_total_day',
+        'delivery_price',
+        'collet_price',
+        'returned_at',
+        'createdAt',
+      ],
       include: [
         {
           model: Client,
@@ -83,11 +107,29 @@ class ContractController {
     return res.json({
       id,
       price_total_day,
+      delivery_price,
+      collet_price,
       returned_at,
       createdAt,
       client,
       items,
     });
+  }
+
+  async update(req, res) {
+    const { id } = req.params;
+
+    const { returned_at, collet_price } = req.body;
+
+    const contract = await Contract.findByPk(id);
+
+    if (!contract) {
+      return res.status(400).json({ error: 'Contract does not exists' });
+    }
+
+    await contract.update({ returned_at, collet_price });
+
+    return res.json({});
   }
 }
 
