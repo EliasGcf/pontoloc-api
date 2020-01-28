@@ -19,6 +19,7 @@ routes.put('/materials/:id', MaterialController.update);
 routes.get('/contracts', ContractController.index);
 routes.get('/contracts/:id', ContractController.show);
 routes.post('/contracts', ContractController.store);
+routes.put('/contracts/:id', ContractController.update);
 
 routes.post('/contractItems', ContractItemController.store);
 
