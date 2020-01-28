@@ -6,6 +6,8 @@ class Contract extends Model {
       {
         price_total_day: Sequelize.DOUBLE,
         returned_at: Sequelize.DATE,
+        delivery_price: Sequelize.DOUBLE,
+        collet_price: Sequelize.DOUBLE,
       },
       {
         sequelize,
