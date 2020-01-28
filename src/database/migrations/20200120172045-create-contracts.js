@@ -21,6 +21,16 @@ module.exports = {
         allowNull: true,
         defaultValue: 0,
       },
+      delivery_price: {
+        type: Sequelize.DOUBLE,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      collet_price: {
+        type: Sequelize.DOUBLE,
+        allowNull: false,
+        defaultValue: 0,
+      },
       returned_at: {
         type: Sequelize.DATE,
         allowNull: true,
