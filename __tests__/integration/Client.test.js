@@ -178,7 +178,7 @@ describe('Client', () => {
 
       await request(app) // cria contract
         .post('/contracts')
-        .send({ client_id: response.body.id });
+        .send({ client_id: response.body.id, delivery_price: 0 });
 
       const deleteResponse = await request(app).delete(
         `/clients/${response.body.id}`

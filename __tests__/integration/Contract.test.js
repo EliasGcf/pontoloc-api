@@ -21,6 +21,7 @@ describe('Contract', () => {
         .post('/contracts')
         .send({
           client_id: body.id,
+          delivery_price: 0,
         });
 
       expect(response.status).toBe(200);
@@ -40,7 +41,7 @@ describe('Contract', () => {
     it('should not be able to register a contract with invalid client id', async () => {
       const response = await request(app)
         .post('/contracts')
-        .send({ client_id: 1 });
+        .send({ client_id: 1, delivery_price: 0 });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error');
@@ -60,12 +61,14 @@ describe('Contract', () => {
         .post('/contracts')
         .send({
           client_id: body.id,
+          delivery_price: 0,
         });
 
       await request(app)
         .post('/contracts')
         .send({
           client_id: body.id,
+          delivery_price: 0,
         });
 
       const response = await request(app).get('/contracts');
@@ -104,6 +107,7 @@ describe('Contract', () => {
         .post('/contracts')
         .send({
           client_id: body.id,
+          delivery_price: 0,
         });
 
       const response = await request(app).get(`/contracts/${id}`);
@@ -122,6 +126,31 @@ describe('Contract', () => {
           items: [],
         })
       );
+    });
+  });
+
+  describe('Update', () => {
+    it('should be able to edit a contract with returned_at or collet_price', async () => {
+      const client = await factory.attrs('Client');
+
+      const { body } = await request(app)
+        .post('/clients')
+        .send(client);
+
+      const {
+        body: { id },
+      } = await request(app)
+        .post('/contracts')
+        .send({
+          client_id: body.id,
+          delivery_price: 0,
+        });
+
+      const response = await request(app)
+        .put(`/contracts/${id}`)
+        .send({ returned_at: new Date(), collet_price: 50 });
+
+      expect(response.status).toBe(200);
     });
   });
 });

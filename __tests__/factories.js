@@ -22,16 +22,4 @@ factory.define('ContractItem', ContractItem, {
   quantity: () => faker.random.number(),
 });
 
-/* factory.define('Item', Item, {
-  name: faker.commerce.product(),
-  price: faker.commerce.price(),
-}); */
-
-/* factory.define('Rent', Rent, {
-  // informar o client_id, e item_it na hora de usar
-  amount: faker.random.number(),
-  rent_price: faker.commerce.price(),
-  returned_at: null,
-}); */
-
 export default factory;

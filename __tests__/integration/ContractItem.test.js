@@ -26,6 +26,7 @@ describe('ContractItem', () => {
         .post('/contracts')
         .send({
           client_id,
+          delivery_price: 0,
         });
 
       const {
@@ -101,6 +102,7 @@ describe('ContractItem', () => {
         .post('/contracts')
         .send({
           client_id,
+          delivery_price: 0,
         });
 
       const response = await request(app)
