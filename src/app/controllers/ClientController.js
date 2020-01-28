@@ -1,23 +1,8 @@
-import * as Yup from 'yup';
-
 import Client from '../models/Client';
 import Contract from '../models/Contract';
 
 class ClientController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      cpf: Yup.string()
-        .required()
-        .length(14),
-      telefone: Yup.string().required(),
-      endereco: Yup.string().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const clientExists = await Client.findOne({ where: { cpf: req.body.cpf } });
 
     if (clientExists) {
@@ -38,19 +23,6 @@ class ClientController {
   }
 
   async update(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      cpf: Yup.string()
-        .required()
-        .length(14),
-      telefone: Yup.string().required(),
-      endereco: Yup.string().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { id } = req.params;
 
     const client = await Client.findByPk(id);

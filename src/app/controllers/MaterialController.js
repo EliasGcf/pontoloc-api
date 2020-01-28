@@ -1,18 +1,7 @@
-import * as Yup from 'yup';
-
 import Material from '../models/Material';
 
 class MaterialController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      price_day: Yup.number().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { name, price_day } = req.body;
 
     const itemExists = await Material.findOne({ where: { name } });
@@ -27,15 +16,6 @@ class MaterialController {
   }
 
   async update(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string().notRequired(),
-      price_day: Yup.number().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { id } = req.params;
 
     const material = await Material.findByPk(id);

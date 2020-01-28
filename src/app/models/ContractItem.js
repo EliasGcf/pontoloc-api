@@ -15,11 +15,9 @@ class ContractItem extends Model {
     );
 
     this.addHook('beforeSave', async orderItem => {
-      if (orderItem.quantity) {
-        const material = await Material.findByPk(orderItem.material_id);
+      const material = await Material.findByPk(orderItem.material_id);
 
-        orderItem.price_quantity_day = material.price_day * orderItem.quantity;
-      }
+      orderItem.price_quantity_day = material.price_day * orderItem.quantity;
     });
 
     return this;

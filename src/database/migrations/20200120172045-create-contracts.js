@@ -31,6 +31,11 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
+      final_price: {
+        type: Sequelize.DOUBLE,
+        allowNull: true,
+        defaultValue: 0,
+      },
       returned_at: {
         type: Sequelize.DATE,
         allowNull: true,

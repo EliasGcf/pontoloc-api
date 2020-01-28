@@ -148,9 +148,25 @@ describe('Contract', () => {
 
       const response = await request(app)
         .put(`/contracts/${id}`)
-        .send({ returned_at: new Date(), collet_price: 50 });
+        .send({ returned_at: new Date(), collet_price: 50, final_price: 0 });
 
       expect(response.status).toBe(200);
+    });
+
+    it('should not be able to edit a contract with invalid data', async () => {
+      const response = await request(app)
+        .put(`/contracts/${1}`)
+        .send({ returned_at: new Date(), collet_price: 50 });
+
+      expect(response.status).toBe(400);
+    });
+
+    it('should not be able to edit a contract with invalid id', async () => {
+      const response = await request(app)
+        .put(`/contracts/${1}`)
+        .send({ returned_at: new Date(), collet_price: 50, final_price: 0 });
+
+      expect(response.status).toBe(400);
     });
   });
 });

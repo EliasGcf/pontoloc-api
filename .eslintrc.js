@@ -5,7 +5,7 @@ module.exports = {
     jest: true
   },
   extends: ['airbnb-base', 'prettier'],
-  plugins: ['prettier', 'eslint-plugin-import-helpers'],
+  plugins: ['prettier'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -20,19 +20,5 @@ module.exports = {
     "no-param-reassign": "off",
     camelcase: "off",
     "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
-    'import-helpers/order-imports': [
-      'warn',
-      { // example configuration
-          newlinesBetween: 'always',
-          groups: [
-            '/^youch/',
-            'module',
-            '/config/',
-            '/^@shared/',
-            ['parent', 'sibling', 'index'],
-          ],
-          alphabetize: { order: 'asc', ignoreCase: true },
-      },
-  ],
   },
 };

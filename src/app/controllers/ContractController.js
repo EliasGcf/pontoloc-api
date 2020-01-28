@@ -1,5 +1,3 @@
-import * as Yup from 'yup';
-
 import Client from '../models/Client';
 import Contract from '../models/Contract';
 import ContractItem from '../models/ContractItem';
@@ -7,15 +5,6 @@ import Material from '../models/Material';
 
 class ContractController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      client_id: Yup.number().required(),
-      delivery_price: Yup.number().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { client_id, delivery_price } = req.body;
 
     const clientExists = await Client.findByPk(client_id);
@@ -119,7 +108,7 @@ class ContractController {
   async update(req, res) {
     const { id } = req.params;
 
-    const { returned_at, collet_price } = req.body;
+    const { returned_at, collet_price, final_price } = req.body;
 
     const contract = await Contract.findByPk(id);
 
@@ -127,9 +116,20 @@ class ContractController {
       return res.status(400).json({ error: 'Contract does not exists' });
     }
 
-    await contract.update({ returned_at, collet_price });
+    await contract.update({ returned_at, collet_price, final_price });
 
-    return res.json({});
+    const { price_total_day, delivery_price, client_id, createdAt } = contract;
+
+    return res.json({
+      id,
+      client_id,
+      price_total_day,
+      delivery_price,
+      collet_price,
+      final_price,
+      createdAt,
+      returned_at,
+    });
   }
 }
 
