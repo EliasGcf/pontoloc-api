@@ -1,3 +1,4 @@
+import { isValid } from 'cpf';
 import Client from '../models/Client';
 import Contract from '../models/Contract';
 
@@ -11,10 +12,24 @@ class ClientController {
      * Check if client already exists
      */
     if (clientExists) {
-      return res.status(400).json({ error: 'Client already exists' });
+      return res.status(400).json({ error: 'Cliente já cadastrado' });
     }
 
     const { name, cpf, telefone, endereco } = req.body;
+
+    /*
+     * Check if CPF is valid
+     */
+    if (!isValid(cpf)) {
+      return res.status(400).json({ error: 'CPF inválido!' });
+    }
+
+    /*
+     * Check if telefone is valid
+     */
+    if (telefone.match(/\(\d{2}\)\s\d{1}\s\d{4}-\d{4}/g) === null) {
+      return res.status(400).json({ error: 'Telefone inválido' });
+    }
 
     const { id } = await Client.create({ name, cpf, telefone, endereco });
 
