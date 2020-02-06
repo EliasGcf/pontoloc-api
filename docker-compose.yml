@@ -1,0 +1,32 @@
+version: '3.6'
+
+networks:
+  pontoloc-network:
+    driver: bridge
+
+services:
+  pontoloc-api:
+    build: .
+    volumes:
+      - .:/home/node/api
+    environment:
+      - DB_HOST=pontoloc-postgres
+    depends_on:
+      - pontoloc-postgres
+    networks:
+      - pontoloc-network
+    container_name: pontoloc-api
+    command: yarn dev
+    ports:
+      - '3333:3333'
+
+  pontoloc-postgres:
+    image: postgres
+    container_name: pontoloc-postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD:${DB_PASS}
+    ports:
+      - '5432:5432'
+    networks:
+      - pontoloc-network
