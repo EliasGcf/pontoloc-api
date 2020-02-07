@@ -25,8 +25,8 @@ services:
     container_name: pontoloc-postgres
     restart: always
     environment:
-      - POSTGRES_PASSWORD:${DB_PASS}
-      - POSTGRES_DB:${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - '5432:5432'
     networks:
