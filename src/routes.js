@@ -19,6 +19,7 @@ import MaterialUpdate from './app/validators/MaterialUpdate';
 const routes = new Router();
 
 routes.get('/clients', ClientController.index);
+routes.get('/clients/:id', ClientController.show);
 routes.post('/clients', ClientStore, ClientController.store);
 routes.put('/clients/:id', ClietnUpdate, ClientController.update);
 routes.delete('/clients/:id', ClientController.destroy);
