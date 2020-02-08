@@ -63,6 +63,20 @@ class ClientController {
     return res.json(clients);
   }
 
+  async show(req, res) {
+    const { id } = req.params;
+
+    const client = await Client.findByPk(id, {
+      attributes: ['id', 'name', 'cpf', 'telefone', 'endereco'],
+    });
+
+    if (!client) {
+      return res.status(400).json({ error: 'Cliente não existe' });
+    }
+
+    return res.json(client);
+  }
+
   async destroy(req, res) {
     const { id: client_id } = req.params;
 
