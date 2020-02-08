@@ -13,12 +13,31 @@ class ContractController {
       return res.status(400).json({ error: 'Client does not exists' });
     }
 
-    const {
-      id,
-      createdAt,
-      price_total_day,
-      returned_at,
-    } = await Contract.create({ client_id, delivery_price });
+    const { id, returned_at, createdAt } = await Contract.create({
+      client_id,
+      delivery_price,
+    });
+
+    const items = await Promise.all(
+      req.body.items.map(async item => {
+        const material = await Material.findByPk(item.material_id);
+        const price_quantity_day = material.price_day * item.quantity;
+        return {
+          ...item,
+          contract_id: id,
+          price_quantity_day,
+        };
+      })
+    );
+
+    const contractItems = await ContractItem.bulkCreate(items);
+
+    const price_total_day = contractItems.reduce(
+      (total, item) => total + item.price_quantity_day,
+      0
+    );
+
+    await Contract.update({ price_total_day }, { where: { id } });
 
     return res.json({
       id,
