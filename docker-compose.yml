@@ -23,7 +23,6 @@ services:
   pontoloc-postgres:
     image: postgres
     container_name: pontoloc-postgres
-    restart: always
     environment:
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
