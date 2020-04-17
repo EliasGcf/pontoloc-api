@@ -140,6 +140,42 @@ describe('Client', () => {
       expect(response.body).toHaveLength(2);
     });
 
+    it('should be able to list all clients in soft delete', async () => {
+      const clientsRepository = getRepository(Client);
+
+      await request(app).post('/clients').send({
+        name: 'Gustavo',
+        cpf: '761.426.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const { body: client1 } = await request(app).post('/clients').send({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const { body: client2 } = await request(app).post('/clients').send({
+        name: 'Patricia',
+        cpf: '892.357.545-34',
+        phone_number: '92992979776',
+        address: 'Rua Pancrácio Nobre, Planalto, 867',
+      });
+
+      client1.deleted_at = new Date();
+      client2.deleted_at = new Date();
+
+      await clientsRepository.save([client1, client2]);
+
+      const response = await request(app)
+        .get('/clients')
+        .query({ deleted: true });
+
+      expect(response.body).toHaveLength(2);
+    });
+
     it('should be abtle to list one client', async () => {
       const { body: client } = await request(app).post('/clients').send({
         name: 'Elias Gabriel',

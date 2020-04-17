@@ -3,6 +3,7 @@
   - [x] Não deve ser possivel ter registros duplicados pelo CPF, incluindo os inativos
 
   - [x] Deve ser possivel listar todos os registros
+  - [x] Deve ser possivel listar todos os registros em soft delete
   - [x] Deve ser possivel listar apenas um registro
   - [x] Não deve ser possivel listar um cliente que não existe
 

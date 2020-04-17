@@ -1,4 +1,4 @@
-import { getRepository } from 'typeorm';
+import { getRepository, IsNull, Not } from 'typeorm';
 import { Router } from 'express';
 
 import CreateClientService from '@services/CreateClientService';
@@ -40,9 +40,14 @@ clientRouter.post('/', async (req, res) => {
 });
 
 clientRouter.get('/', async (req, res) => {
+  const { deleted } = req.query;
+
   const clientsRepository = getRepository(Client);
 
-  const clients = await clientsRepository.find();
+  const clients = await clientsRepository.find({
+    withDeleted: !!deleted,
+    where: { deleted_at: deleted ? Not(IsNull()) : IsNull() },
+  });
 
   return res.json(clients);
 });
