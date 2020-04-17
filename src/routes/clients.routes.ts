@@ -7,9 +7,9 @@ import DeleteClientService from '@services/DeleteClientService';
 import Client from '@models/Client';
 import AppError from '@errors/AppError';
 
-const clientRouter = Router();
+const clientsRouter = Router();
 
-clientRouter.use('/:id', async (req, res, next) => {
+clientsRouter.use('/:id', async (req, res, next) => {
   const clientsRepository = getRepository(Client);
   const { id } = req.params;
 
@@ -24,7 +24,7 @@ clientRouter.use('/:id', async (req, res, next) => {
   return next();
 });
 
-clientRouter.post('/', async (req, res) => {
+clientsRouter.post('/', async (req, res) => {
   const { name, cpf, phone_number, address } = req.body;
 
   const createClient = new CreateClientService();
@@ -39,7 +39,7 @@ clientRouter.post('/', async (req, res) => {
   return res.status(201).json(client);
 });
 
-clientRouter.get('/', async (req, res) => {
+clientsRouter.get('/', async (req, res) => {
   const { deleted } = req.query;
 
   const clientsRepository = getRepository(Client);
@@ -52,7 +52,7 @@ clientRouter.get('/', async (req, res) => {
   return res.json(clients);
 });
 
-clientRouter.get('/:id', async (req, res) => {
+clientsRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
   const clientsRepository = getRepository(Client);
 
@@ -61,7 +61,7 @@ clientRouter.get('/:id', async (req, res) => {
   return res.json(client);
 });
 
-clientRouter.put('/:id', async (req, res) => {
+clientsRouter.put('/:id', async (req, res) => {
   const { name, cpf, phone_number, address } = req.body;
 
   const updateClient = new UpdateClientService();
@@ -77,7 +77,7 @@ clientRouter.put('/:id', async (req, res) => {
   return res.status(204).end();
 });
 
-clientRouter.delete('/:id', async (req, res) => {
+clientsRouter.delete('/:id', async (req, res) => {
   const deleteClient = new DeleteClientService();
 
   await deleteClient.execute({ id: req.client.id });
@@ -85,4 +85,4 @@ clientRouter.delete('/:id', async (req, res) => {
   return res.status(200).end();
 });
 
-export default clientRouter;
+export default clientsRouter;

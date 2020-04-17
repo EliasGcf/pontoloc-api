@@ -7,6 +7,8 @@ import routes from './routes';
 
 import createConnection from './database';
 
+// console.log(process.env.APP_SECRET);
+
 createConnection();
 const app = express();
 

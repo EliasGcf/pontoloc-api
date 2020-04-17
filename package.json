@@ -8,19 +8,26 @@
     "build": "tsc",
     "dev:server": "ts-node-dev --inspect -r tsconfig-paths/register --transpileOnly --ignore-watch node_modules src/server.ts",
     "test": "cross-env NODE_ENV=test jest",
-    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js"
+    "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
+    "seed:config": "ts-node-dev ./node_modules/typeorm-seeding/dist/cli.js config",
+    "seed:run": "ts-node-dev ./node_modules/typeorm-seeding/dist/cli.js seed"
   },
   "dependencies": {
     "@types/supertest": "^2.0.8",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.0.2",
-    "typeorm": "^0.2.24"
+    "typeorm": "^0.2.24",
+    "typeorm-seeding": "^1.6.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.6",
     "@types/jest": "^25.2.1",
+    "@types/jsonwebtoken": "^8.3.9",
     "@typescript-eslint/eslint-plugin": "^2.28.0",
     "@typescript-eslint/parser": "^2.28.0",
     "cross-env": "^7.0.2",

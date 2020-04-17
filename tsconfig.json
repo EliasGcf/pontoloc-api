@@ -11,7 +11,8 @@
       "@errors/*": ["errors/*"],
       "@models/*": ["models/*"],
       "@repositories/*": ["repositories/*"],
-      "@services/*": ["services/*"]
+      "@services/*": ["services/*"],
+      "@config/*": ["config/*"]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,
