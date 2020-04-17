@@ -1,8 +1,11 @@
 import request from 'supertest';
 import { Connection, getRepository, getConnection } from 'typeorm';
+import { runSeeder } from 'typeorm-seeding';
 
 import Client from '../../src/models/Client';
+import UserAdminSeed from '../../src/database/seeds/UserAdmin.seed';
 import createConnection from '../../src/database';
+import getToken from '../utils/getTokenJWT';
 
 import app from '../../src/app';
 
@@ -12,6 +15,7 @@ describe('Client', () => {
   beforeAll(async () => {
     connection = await createConnection('test-connection');
     await connection.runMigrations();
+    await runSeeder(UserAdminSeed);
   });
 
   afterEach(async () => {
@@ -22,6 +26,7 @@ describe('Client', () => {
   });
 
   afterAll(async () => {
+    await connection.query('DELETE FROM users');
     const mainConnection = getConnection();
 
     await connection.close();
@@ -30,14 +35,19 @@ describe('Client', () => {
 
   describe('Create', () => {
     it('should be able to create a new client', async () => {
+      const token = await getToken();
+
       const clientsRepository = getRepository(Client);
 
-      const response = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const response = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const client = await clientsRepository.findOne({
         where: { cpf: '761.436.350-72' },
@@ -54,21 +64,28 @@ describe('Client', () => {
     });
 
     it('should not be able to create a new client with CPF duplicated', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const response = await request(app).post('/clients').send({
-        name: 'Patricia',
-        cpf: '761.436.350-72',
-        phone_number: '71982723661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const response = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Patricia',
+          cpf: '761.436.350-72',
+          phone_number: '71982723661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const client = await clientsRepository.find({
         where: { cpf: '761.436.350-72' },
@@ -85,23 +102,30 @@ describe('Client', () => {
     });
 
     it('should not be able to create a new client when exists another client with the same CPF in soft delete', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       await clientsRepository.softDelete(client.id);
 
-      const response = await request(app).post('/clients').send({
-        name: 'Patricia',
-        cpf: '761.436.350-72',
-        phone_number: '71982723661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const response = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Patricia',
+          cpf: '761.436.350-72',
+          phone_number: '71982723661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const dbClient = await clientsRepository.find({
         where: { cpf: '761.436.350-72' },
@@ -121,48 +145,67 @@ describe('Client', () => {
 
   describe('List', () => {
     it('should be able to list all clients', async () => {
-      await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const token = await getToken();
+      await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      await request(app).post('/clients').send({
-        name: 'Patricia',
-        cpf: '892.357.545-34',
-        phone_number: '92992979776',
-        address: 'Rua Pancrácio Nobre, Planalto, 867',
-      });
+      await request(app)
+        .post('/clients')
+        .send({
+          name: 'Patricia',
+          cpf: '892.357.545-34',
+          phone_number: '92992979776',
+          address: 'Rua Pancrácio Nobre, Planalto, 867',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const response = await request(app).get('/clients');
+      const response = await request(app)
+        .get('/clients')
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.body).toHaveLength(2);
     });
 
     it('should be able to list all clients in soft delete', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      await request(app).post('/clients').send({
-        name: 'Gustavo',
-        cpf: '761.426.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      await request(app)
+        .post('/clients')
+        .send({
+          name: 'Gustavo',
+          cpf: '761.426.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const { body: client1 } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client1 } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const { body: client2 } = await request(app).post('/clients').send({
-        name: 'Patricia',
-        cpf: '892.357.545-34',
-        phone_number: '92992979776',
-        address: 'Rua Pancrácio Nobre, Planalto, 867',
-      });
+      const { body: client2 } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Patricia',
+          cpf: '892.357.545-34',
+          phone_number: '92992979776',
+          address: 'Rua Pancrácio Nobre, Planalto, 867',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       client1.deleted_at = new Date();
       client2.deleted_at = new Date();
@@ -171,20 +214,27 @@ describe('Client', () => {
 
       const response = await request(app)
         .get('/clients')
-        .query({ deleted: true });
+        .query({ deleted: true })
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.body).toHaveLength(2);
     });
 
     it('should be abtle to list one client', async () => {
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const token = await getToken();
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const response = await request(app).get(`/clients/${client.id}`);
+      const response = await request(app)
+        .get(`/clients/${client.id}`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.body).toMatchObject({
         name: 'Elias Gabriel',
@@ -195,9 +245,10 @@ describe('Client', () => {
     });
 
     it('should not be able to list one client that does not exists', async () => {
-      const response = await request(app).get(
-        `/clients/12e5c331-1091-405f-b4e1-949000125129`,
-      );
+      const token = await getToken();
+      const response = await request(app)
+        .get(`/clients/12e5c331-1091-405f-b4e1-949000125129`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toMatchObject(
@@ -211,21 +262,28 @@ describe('Client', () => {
 
   describe('Update', () => {
     it('should be able to update a client by an id', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const response = await request(app).put(`/clients/${client.id}`).send({
-        name: 'Elias Gabriel Da Cruz Figueredo',
-        cpf: '761.436.350-72',
-        phone_number: '75982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const response = await request(app)
+        .put(`/clients/${client.id}`)
+        .send({
+          name: 'Elias Gabriel Da Cruz Figueredo',
+          cpf: '761.436.350-72',
+          phone_number: '75982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const dbClient = await clientsRepository.findOne(client.id);
 
@@ -239,6 +297,7 @@ describe('Client', () => {
     });
 
     it('should not be able to update a client that does not exists', async () => {
+      const token = await getToken();
       const response = await request(app)
         .put(`/clients/12e5c331-1091-405f-b4e1-949000125129`)
         .send({
@@ -246,7 +305,8 @@ describe('Client', () => {
           cpf: '761.436.350-72',
           phone_number: '75982740661',
           address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-        });
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toMatchObject(
@@ -258,28 +318,38 @@ describe('Client', () => {
     });
 
     it('should not be able to update a client with an CPF existed', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '959.178.070-27',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '959.178.070-27',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const response = await request(app).put(`/clients/${client.id}`).send({
-        name: 'Elias Gabriel Da Cruz Figueredo',
-        cpf: '959.178.070-27',
-        phone_number: '75982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const response = await request(app)
+        .put(`/clients/${client.id}`)
+        .send({
+          name: 'Elias Gabriel Da Cruz Figueredo',
+          cpf: '959.178.070-27',
+          phone_number: '75982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const dbClient = await clientsRepository.findOne(client.id);
 
@@ -294,14 +364,18 @@ describe('Client', () => {
     });
 
     it('should not be able to update a client when exists another client with the same CPF in soft delete', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const { body: softDeleteClient } = await request(app)
         .post('/clients')
@@ -310,16 +384,20 @@ describe('Client', () => {
           cpf: '959.178.070-27',
           phone_number: '71982740661',
           address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-        });
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       await clientsRepository.softDelete(softDeleteClient.id);
 
-      const response = await request(app).put(`/clients/${client.id}`).send({
-        name: 'Elias Gabriel Da Cruz Figueredo',
-        cpf: '959.178.070-27',
-        phone_number: '75982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const response = await request(app)
+        .put(`/clients/${client.id}`)
+        .send({
+          name: 'Elias Gabriel Da Cruz Figueredo',
+          cpf: '959.178.070-27',
+          phone_number: '75982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const dbClient = await clientsRepository.findOne(client.id);
 
@@ -334,23 +412,30 @@ describe('Client', () => {
     });
 
     it('should not be able to update a client in soft delete', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       await clientsRepository.softDelete(client.id);
 
-      const response = await request(app).put(`/clients/${client.id}`).send({
-        name: 'Elias Gabriel Da Cruz Figueredo',
-        cpf: '761.436.350-72',
-        phone_number: '75982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const response = await request(app)
+        .put(`/clients/${client.id}`)
+        .send({
+          name: 'Elias Gabriel Da Cruz Figueredo',
+          cpf: '761.436.350-72',
+          phone_number: '75982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toMatchObject(
@@ -362,22 +447,29 @@ describe('Client', () => {
     });
 
     it('should not be able to update deleted_at field directly', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const response = await request(app).put(`/clients/${client.id}`).send({
-        name: 'Elias Gabriel Da Cruz Figueredo',
-        cpf: '761.436.350-72',
-        phone_number: '75982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-        deleted_at: new Date(),
-      });
+      const response = await request(app)
+        .put(`/clients/${client.id}`)
+        .send({
+          name: 'Elias Gabriel Da Cruz Figueredo',
+          cpf: '761.436.350-72',
+          phone_number: '75982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+          deleted_at: new Date(),
+        })
+        .set('Authorization', `Bearer ${token}`);
 
       const dbClient = await clientsRepository.findOne(client.id);
 
@@ -396,16 +488,22 @@ describe('Client', () => {
 
   describe('Delete', () => {
     it('should be able to delete a client and set deleted_at', async () => {
+      const token = await getToken();
       const clientsRepository = getRepository(Client);
 
-      const { body: client } = await request(app).post('/clients').send({
-        name: 'Elias Gabriel',
-        cpf: '761.436.350-72',
-        phone_number: '71982740661',
-        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
-      });
+      const { body: client } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '761.436.350-72',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        })
+        .set('Authorization', `Bearer ${token}`);
 
-      const response = await request(app).delete(`/clients/${client.id}`);
+      const response = await request(app)
+        .delete(`/clients/${client.id}`)
+        .set('Authorization', `Bearer ${token}`);
 
       const dbClient = await clientsRepository.findOne({
         where: {
@@ -419,9 +517,11 @@ describe('Client', () => {
     });
 
     it('should not be able to delete a client that does not exists', async () => {
-      const response = await request(app).delete(
-        `/clients/12e5c331-1091-405f-b4e1-949000125129`,
-      );
+      const token = await getToken();
+
+      const response = await request(app)
+        .delete(`/clients/12e5c331-1091-405f-b4e1-949000125129`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toMatchObject(

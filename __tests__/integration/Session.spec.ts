@@ -19,11 +19,8 @@ describe('Session', () => {
     await runSeeder(UserAdminSeed);
   });
 
-  afterEach(async () => {
-    await connection.query('DELETE FROM users');
-  });
-
   afterAll(async () => {
+    await connection.query('DELETE FROM users');
     const mainConnection = getConnection();
 
     await connection.close();

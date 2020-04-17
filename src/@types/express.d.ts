@@ -19,5 +19,8 @@ interface Client {
 declare namespace Express {
   export interface Request {
     client: Client;
+    user: {
+      id: string;
+    };
   }
 }
