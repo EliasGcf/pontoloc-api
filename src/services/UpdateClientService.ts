@@ -22,7 +22,8 @@ class UpdateClientService {
     const clientsRepository = getRepository(Client);
 
     const clientWithAnotherCPF = await clientsRepository.findOne({
-      cpf: Not(client.cpf),
+      where: { id: Not(client.id) },
+      withDeleted: true,
     });
 
     if (clientWithAnotherCPF) {

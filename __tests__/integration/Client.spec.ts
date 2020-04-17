@@ -53,7 +53,7 @@ describe('Client', () => {
       );
     });
 
-    it('should not be able to create with CPF duplicated', async () => {
+    it('should not be able to create a new client with CPF duplicated', async () => {
       const clientsRepository = getRepository(Client);
 
       await request(app).post('/clients').send({
@@ -75,6 +75,40 @@ describe('Client', () => {
       });
 
       expect(client).toHaveLength(1);
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject(
+        expect.objectContaining({
+          status: expect.stringMatching('error'),
+          message: expect.stringMatching('Client already exists'),
+        }),
+      );
+    });
+
+    it('should not be able to create a new client when exists another client with the same CPF in soft delete', async () => {
+      const clientsRepository = getRepository(Client);
+
+      const { body: client } = await request(app).post('/clients').send({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      await clientsRepository.softDelete(client.id);
+
+      const response = await request(app).post('/clients').send({
+        name: 'Patricia',
+        cpf: '761.436.350-72',
+        phone_number: '71982723661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const dbClient = await clientsRepository.find({
+        where: { cpf: '761.436.350-72' },
+        withDeleted: true,
+      });
+
+      expect(dbClient).toHaveLength(1);
       expect(response.status).toBe(400);
       expect(response.body).toMatchObject(
         expect.objectContaining({
@@ -219,6 +253,106 @@ describe('Client', () => {
         expect.objectContaining({
           status: 'error',
           message: 'Client already exists',
+        }),
+      );
+    });
+
+    it('should not be able to update a client when exists another client with the same CPF in soft delete', async () => {
+      const clientsRepository = getRepository(Client);
+
+      const { body: client } = await request(app).post('/clients').send({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const { body: softDeleteClient } = await request(app)
+        .post('/clients')
+        .send({
+          name: 'Elias Gabriel',
+          cpf: '959.178.070-27',
+          phone_number: '71982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        });
+
+      await clientsRepository.softDelete(softDeleteClient.id);
+
+      const response = await request(app).put(`/clients/${client.id}`).send({
+        name: 'Elias Gabriel Da Cruz Figueredo',
+        cpf: '959.178.070-27',
+        phone_number: '75982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const dbClient = await clientsRepository.findOne(client.id);
+
+      expect(dbClient?.cpf).toBe('761.436.350-72');
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Client already exists',
+        }),
+      );
+    });
+
+    it('should not be able to update a client in soft delete', async () => {
+      const clientsRepository = getRepository(Client);
+
+      const { body: client } = await request(app).post('/clients').send({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      await clientsRepository.softDelete(client.id);
+
+      const response = await request(app).put(`/clients/${client.id}`).send({
+        name: 'Elias Gabriel Da Cruz Figueredo',
+        cpf: '761.436.350-72',
+        phone_number: '75982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Client does not exists',
+        }),
+      );
+    });
+
+    it('should not be able to update deleted_at field directly', async () => {
+      const clientsRepository = getRepository(Client);
+
+      const { body: client } = await request(app).post('/clients').send({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const response = await request(app).put(`/clients/${client.id}`).send({
+        name: 'Elias Gabriel Da Cruz Figueredo',
+        cpf: '761.436.350-72',
+        phone_number: '75982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+        deleted_at: new Date(),
+      });
+
+      const dbClient = await clientsRepository.findOne(client.id);
+
+      expect(response.status).toBe(204);
+      expect(dbClient).toMatchObject(
+        expect.objectContaining({
+          name: 'Elias Gabriel Da Cruz Figueredo',
+          cpf: '761.436.350-72',
+          phone_number: '75982740661',
+          address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+          deleted_at: null,
         }),
       );
     });

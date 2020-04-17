@@ -19,7 +19,10 @@ class CreateClientService {
   }: Request): Promise<Client> {
     const clientsRepository = getRepository(Client);
 
-    const clientExists = await clientsRepository.findOne({ where: { cpf } });
+    const clientExists = await clientsRepository.findOne({
+      where: { cpf },
+      withDeleted: true,
+    });
 
     if (clientExists) {
       throw new AppError('Client already exists');
