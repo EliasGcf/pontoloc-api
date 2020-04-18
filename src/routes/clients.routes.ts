@@ -47,18 +47,21 @@ clientsRouter.get('/', async (req, res) => {
   const clients = await clientsRepository.find({
     withDeleted: !!deleted,
     where: { deleted_at: deleted ? Not(IsNull()) : IsNull() },
+    order: { name: 'ASC' },
+    select: ['id', 'name', 'cpf', 'phone_number', 'address'],
   });
 
   return res.json(clients);
 });
 
 clientsRouter.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  const clientsRepository = getRepository(Client);
+  const { client } = req;
 
-  const client = await clientsRepository.findOne(id);
+  delete client.created_at;
+  delete client.updated_at;
+  delete client.deleted_at;
 
-  return res.json(client);
+  return res.json(req.client);
 });
 
 clientsRouter.put('/:id', async (req, res) => {

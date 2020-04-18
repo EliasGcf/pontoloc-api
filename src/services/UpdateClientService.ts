@@ -21,12 +21,12 @@ class UpdateClientService {
   }: Request): Promise<void> {
     const clientsRepository = getRepository(Client);
 
-    const clientWithAnotherCPF = await clientsRepository.findOne({
-      where: { id: Not(client.id) },
+    const clientWithSameCPF = await clientsRepository.findOne({
+      where: { id: Not(client.id), cpf },
       withDeleted: true,
     });
 
-    if (clientWithAnotherCPF) {
+    if (clientWithSameCPF) {
       throw new AppError('Client already exists');
     }
 
