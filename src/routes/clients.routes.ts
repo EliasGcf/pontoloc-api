@@ -7,22 +7,9 @@ import DeleteClientService from '@services/DeleteClientService';
 import Client from '@models/Client';
 import AppError from '@errors/AppError';
 
+import clientExistsMiddleware from '@middlewares/clientExists';
+
 const clientsRouter = Router();
-
-clientsRouter.use('/:id', async (req, res, next) => {
-  const clientsRepository = getRepository(Client);
-  const { id } = req.params;
-
-  const client = await clientsRepository.findOne(id);
-
-  if (!client) {
-    throw new AppError('Client does not exists');
-  }
-
-  req.client = client;
-
-  return next();
-});
 
 clientsRouter.post('/', async (req, res) => {
   const { name, cpf, phone_number, address } = req.body;
@@ -69,6 +56,10 @@ clientsRouter.get('/:id', async (req, res) => {
     select: ['id', 'name', 'cpf', 'phone_number', 'address'],
   });
 
+  if (!client) {
+    throw new AppError('Client does not exists');
+  }
+
   return res.json(client);
 });
 
@@ -78,7 +69,7 @@ clientsRouter.put('/:id', async (req, res) => {
   const updateClient = new UpdateClientService();
 
   await updateClient.execute({
-    client_id: req.client.id,
+    client_id: req.params.id,
     name,
     cpf,
     phone_number,
@@ -88,7 +79,7 @@ clientsRouter.put('/:id', async (req, res) => {
   return res.status(204).end();
 });
 
-clientsRouter.delete('/:id', async (req, res) => {
+clientsRouter.delete('/:id', clientExistsMiddleware, async (req, res) => {
   const deleteClient = new DeleteClientService();
 
   await deleteClient.execute({ id: req.client.id });

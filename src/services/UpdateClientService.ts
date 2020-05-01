@@ -21,6 +21,12 @@ class UpdateClientService {
   }: Request): Promise<void> {
     const clientsRepository = getRepository(Client);
 
+    const client = await clientsRepository.findOne(client_id);
+
+    if (!client) {
+      throw new AppError('Client does not exists');
+    }
+
     const clientWithSameCPF = await clientsRepository.findOne({
       where: { id: Not(client_id), cpf },
       withDeleted: true,
