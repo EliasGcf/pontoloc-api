@@ -5,10 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from 'typeorm';
 
 import Client from './Client';
+import ContractItem from './ContractItem';
 
 @Entity('contracts')
 class Contract {
@@ -21,6 +23,9 @@ class Contract {
   @ManyToOne(() => Client)
   @JoinColumn({ name: 'client_id' })
   client: Client;
+
+  @OneToMany(() => ContractItem, contractItem => contractItem.contract)
+  contract_items: ContractItem[];
 
   @Column()
   daily_total_price: number;

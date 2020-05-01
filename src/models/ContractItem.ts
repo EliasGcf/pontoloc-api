@@ -19,7 +19,7 @@ class ContractItem {
   @Column()
   contract_id: string;
 
-  @ManyToOne(() => Contract)
+  @ManyToOne(() => Contract, contract => contract.contract_items)
   @JoinColumn({ name: 'contract_id' })
   contract: Contract;
 

@@ -39,5 +39,8 @@
   - [x] Não deve ser possivel atualizar um registro que não existe
 
 - Contratos
-  - [ ] Deve ser possivel criar um registro
-  - [ ] Não deve ser possivel criar um registro para um cliente inexistente
+  - [x] Deve ser possivel criar um registro
+  - [x] Durante a criação de um contrato, deve ser criado seus respectivos contract_items
+  - [x] Não deve ser possivel criar um registro para um cliente inexistente
+  ---
+  - [ ] Deve ser possivel finalizar um contrato
