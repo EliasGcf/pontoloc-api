@@ -3,7 +3,6 @@ import { getRepository } from 'typeorm';
 import { Router } from 'express';
 
 import Contract from '@models/Contract';
-import ContractItems from '@models/ContractItem';
 
 import CreateContractService from '@services/CreateContractService';
 
@@ -26,10 +25,9 @@ contractsRouter.get('/', async (req, res) => {
   const contractsRepository = getRepository(Contract);
 
   const contracts = await contractsRepository.find({
-    relations: ['client', 'contract_items'],
     select: [
       'id',
-      'client',
+      'client_id',
       'daily_total_price',
       'delivery_price',
       'collect_price',
@@ -39,14 +37,6 @@ contractsRouter.get('/', async (req, res) => {
   });
 
   return res.json(contracts);
-});
-
-contractsRouter.get('/items', async (req, res) => {
-  const contractItemsRepository = getRepository(ContractItems);
-
-  const contractItems = await contractItemsRepository.find({});
-
-  return res.json(contractItems);
 });
 
 export default contractsRouter;

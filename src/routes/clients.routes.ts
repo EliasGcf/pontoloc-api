@@ -55,13 +55,21 @@ clientsRouter.get('/', async (req, res) => {
 });
 
 clientsRouter.get('/:id', async (req, res) => {
-  const { client } = req;
+  const {
+    client: { id },
+  } = req;
+  const clientsRepository = getRepository(Client);
 
-  delete client.created_at;
-  delete client.updated_at;
-  delete client.deleted_at;
+  const client = await clientsRepository.findOne(id, {
+    relations: [
+      'contracts',
+      'contracts.contract_items',
+      'contracts.contract_items.material',
+    ],
+    select: ['id', 'name', 'cpf', 'phone_number', 'address'],
+  });
 
-  return res.json(req.client);
+  return res.json(client);
 });
 
 clientsRouter.put('/:id', async (req, res) => {
@@ -70,7 +78,7 @@ clientsRouter.put('/:id', async (req, res) => {
   const updateClient = new UpdateClientService();
 
   await updateClient.execute({
-    client: req.client,
+    client_id: req.client.id,
     name,
     cpf,
     phone_number,

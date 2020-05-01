@@ -109,5 +109,35 @@ describe('Contract', () => {
         }),
       );
     });
+
+    it('should not be able to create a new contract without materais', async () => {
+      const token = await getToken();
+
+      const clientsRepository = getRepository(Client);
+
+      const client = clientsRepository.create({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      await clientsRepository.save(client);
+
+      const response = await request(app)
+        .post('/contracts')
+        .send({
+          client_id: client.id,
+        })
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Materials array is required',
+        }),
+      );
+    });
   });
 });

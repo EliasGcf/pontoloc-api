@@ -32,6 +32,10 @@ class CreateContractService {
       throw new AppError('Client does not exists');
     }
 
+    if (!materials) {
+      throw new AppError('Materials array is required');
+    }
+
     const contractItemsRepository = getRepository(ContractItem);
     const materialsRepository = getRepository(Material);
     const contractsRepository = getRepository(Contract);

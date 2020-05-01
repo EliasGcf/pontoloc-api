@@ -8,7 +8,7 @@ interface Request {
   cpf: string;
   phone_number: string;
   address: string;
-  client: Client;
+  client_id: string;
 }
 
 class UpdateClientService {
@@ -17,12 +17,12 @@ class UpdateClientService {
     cpf,
     phone_number,
     address,
-    client,
+    client_id,
   }: Request): Promise<void> {
     const clientsRepository = getRepository(Client);
 
     const clientWithSameCPF = await clientsRepository.findOne({
-      where: { id: Not(client.id), cpf },
+      where: { id: Not(client_id), cpf },
       withDeleted: true,
     });
 
@@ -30,12 +30,12 @@ class UpdateClientService {
       throw new AppError('Client already exists');
     }
 
-    client.name = name;
-    client.cpf = cpf;
-    client.phone_number = phone_number;
-    client.address = address;
-
-    await clientsRepository.save(client);
+    await clientsRepository.update(client_id, {
+      name,
+      cpf,
+      phone_number,
+      address,
+    });
   }
 }
 
