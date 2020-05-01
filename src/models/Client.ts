@@ -5,12 +5,18 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
+
+import Contract from './Contract';
 
 @Entity('clients')
 class Client {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToMany(() => Contract, contract => contract.client)
+  contracts: Contract;
 
   @Column()
   name: string;
