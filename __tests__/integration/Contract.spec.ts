@@ -3,6 +3,7 @@ import { Connection, getRepository, getConnection } from 'typeorm';
 import { runSeeder } from 'typeorm-seeding';
 
 import Material from '../../src/models/Material';
+import ContractItem from '../../src/models/ContractItem';
 import Contract from '../../src/models/Contract';
 import Client from '../../src/models/Client';
 import UserAdminSeed from '../../src/database/seeds/UserAdmin.seed';
@@ -24,6 +25,7 @@ describe('Contract', () => {
     await connection.query('DELETE FROM contracts');
     await connection.query('DELETE FROM clients');
     await connection.query('DELETE FROM materials');
+    await connection.query('DELETE FROM contract_items');
   });
 
   afterAll(async () => {
@@ -136,6 +138,126 @@ describe('Contract', () => {
         expect.objectContaining({
           status: 'error',
           message: 'Materials array is required',
+        }),
+      );
+    });
+  });
+
+  describe('List', () => {
+    it('should be able to list all contracts', async () => {
+      const token = await getToken();
+
+      const clientsRepository = getRepository(Client);
+      const contractsRepository = getRepository(Contract);
+      const materialsRepository = getRepository(Material);
+      const contractItemsRepository = getRepository(ContractItem);
+
+      const material = materialsRepository.create({
+        name: 'Estronca',
+        daily_price: 1.4,
+      });
+
+      const client = clientsRepository.create({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const [{ id: material_id }, { id: client_id }] = await Promise.all([
+        materialsRepository.save(material),
+        clientsRepository.save(client),
+      ]);
+
+      const contract = contractsRepository.create({
+        client_id,
+        delivery_price: 50,
+        daily_total_price: 5,
+      });
+
+      const newContract = await contractsRepository.save([contract, contract]);
+
+      const contractItem = contractItemsRepository.create({
+        contract_id: newContract[0].id,
+        material_id,
+        quantity: 2,
+        price_quantity_daily: 2.8,
+      });
+
+      await contractItemsRepository.save(contractItem);
+
+      const response = await request(app)
+        .get('/contracts')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.body).toHaveLength(2);
+    });
+
+    it('should be able to list one contract', async () => {
+      const token = await getToken();
+
+      const clientsRepository = getRepository(Client);
+      const contractsRepository = getRepository(Contract);
+      const materialsRepository = getRepository(Material);
+      const contractItemsRepository = getRepository(ContractItem);
+
+      const material = materialsRepository.create({
+        name: 'Estronca',
+        daily_price: 1.4,
+      });
+
+      const client = clientsRepository.create({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const [{ id: material_id }, { id: client_id }] = await Promise.all([
+        materialsRepository.save(material),
+        clientsRepository.save(client),
+      ]);
+
+      const contract = contractsRepository.create({
+        client_id,
+        delivery_price: 50,
+        daily_total_price: 5,
+      });
+
+      const newContract = await contractsRepository.save([contract, contract]);
+
+      const contractItem = contractItemsRepository.create({
+        contract_id: newContract[0].id,
+        material_id,
+        quantity: 2,
+        price_quantity_daily: 2.8,
+      });
+
+      await contractItemsRepository.save(contractItem);
+
+      const response = await request(app)
+        .get(`/contracts/${newContract[0].id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('client');
+      expect(response.body).toHaveProperty('contract_items');
+      expect(response.body.contract_items).toBeInstanceOf(Array);
+      expect(response.body.contract_items[0]).toHaveProperty('material');
+    });
+
+    it('should not be able to list a contract that does not exists', async () => {
+      const token = await getToken();
+
+      const response = await request(app)
+        .get('/contracts/39b0f3cf-4c83-4bd9-b752-4b22b4d38054')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Contract does not exists',
         }),
       );
     });

@@ -42,6 +42,10 @@
   - [x] Deve ser possivel criar um registro
   - [x] Durante a criação de um contrato, deve ser criado seus respectivos contract_items
   - [x] Não deve ser possivel criar um registro para um cliente inexistente
-  - [ ] Não deve ser possivel criar um registro sem as informações de materiais
+  - [x] Não deve ser possivel criar um registro sem as informações de materiais
+  ---
+  - [x] Deve ser possivel listar todos os contracts
+  - [x] Deve ser possivel listar um unico contract
+  - [ ] Não deve ser possivel listar um contract inexistente
   ---
   - [ ] Deve ser possivel finalizar um contrato

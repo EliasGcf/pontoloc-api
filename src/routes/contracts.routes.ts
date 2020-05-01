@@ -2,6 +2,7 @@ import { getRepository } from 'typeorm';
 
 import { Router } from 'express';
 
+import AppError from '@errors/AppError';
 import Contract from '@models/Contract';
 
 import CreateContractService from '@services/CreateContractService';
@@ -37,6 +38,33 @@ contractsRouter.get('/', async (req, res) => {
   });
 
   return res.json(contracts);
+});
+
+contractsRouter.get('/:id', async (req, res) => {
+  const contractsRepository = getRepository(Contract);
+
+  const contract = await contractsRepository
+    .findOne(req.params.id, {
+      relations: ['client', 'contract_items', 'contract_items.material'],
+      select: [
+        'id',
+        'client_id',
+        'daily_total_price',
+        'delivery_price',
+        'collect_price',
+        'final_price',
+        'collect_at',
+      ],
+    })
+    .catch(() => {
+      throw new AppError('Contract does not exists');
+    });
+
+  if (!contract) {
+    throw new AppError('Contract does not exists');
+  }
+
+  return res.json(contract);
 });
 
 export default contractsRouter;
