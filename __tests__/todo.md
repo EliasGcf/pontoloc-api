@@ -46,6 +46,11 @@
   ---
   - [x] Deve ser possivel listar todos os contracts
   - [x] Deve ser possivel listar um unico contract
-  - [ ] Não deve ser possivel listar um contract inexistente
+  - [x] Não deve ser possivel listar um contract inexistente
   ---
-  - [ ] Deve ser possivel finalizar um contrato
+  - [x] Deve ser possivel finalizar um contrato
+    - Gerar a data de coleta e preencher o campo na database
+    - Receber o valor de coleta, caso exista, e preencher na database
+    - Calcular o total de dias
+    - Calcular o valor final e preencher na database
+  - [x] Não deve ser possivel finalizar um contrato inexistente

@@ -15,7 +15,7 @@ interface MaterialData {
 interface Request {
   client_id: string;
   materials: MaterialData[];
-  delivery_price?: number;
+  delivery_price: number;
 }
 
 class CreateContractService {

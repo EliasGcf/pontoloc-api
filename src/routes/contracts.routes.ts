@@ -6,16 +6,18 @@ import AppError from '@errors/AppError';
 import Contract from '@models/Contract';
 
 import CreateContractService from '@services/CreateContractService';
+import FinishContractService from '@services/FinishContractService';
 
 const contractsRouter = Router();
 
 contractsRouter.post('/', async (req, res) => {
-  const { client_id, materials } = req.body;
+  const { client_id, materials, delivery_price } = req.body;
 
   const createContract = new CreateContractService();
 
   const { id, daily_total_price } = await createContract.execute({
     client_id,
+    delivery_price,
     materials,
   });
 
@@ -26,6 +28,7 @@ contractsRouter.get('/', async (req, res) => {
   const contractsRepository = getRepository(Contract);
 
   const contracts = await contractsRepository.find({
+    order: { created_at: 'DESC' },
     select: [
       'id',
       'client_id',
@@ -34,6 +37,7 @@ contractsRouter.get('/', async (req, res) => {
       'collect_price',
       'final_price',
       'collect_at',
+      'created_at',
     ],
   });
 
@@ -65,6 +69,19 @@ contractsRouter.get('/:id', async (req, res) => {
   }
 
   return res.json(contract);
+});
+
+contractsRouter.put('/:id/finish', async (req, res) => {
+  const { collect_price } = req.body;
+
+  const finishContract = new FinishContractService();
+
+  await finishContract.execute({
+    contract_id: req.params.id,
+    collect_price,
+  });
+
+  return res.status(204).end();
 });
 
 export default contractsRouter;

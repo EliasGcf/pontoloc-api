@@ -262,4 +262,83 @@ describe('Contract', () => {
       );
     });
   });
+
+  describe('Finish', () => {
+    it('should be able to finish one contract', async () => {
+      const token = await getToken();
+
+      const clientsRepository = getRepository(Client);
+      const contractsRepository = getRepository(Contract);
+      const materialsRepository = getRepository(Material);
+      const contractItemsRepository = getRepository(ContractItem);
+
+      const material = materialsRepository.create({
+        name: 'Estronca',
+        daily_price: 1.4,
+      });
+
+      const client = clientsRepository.create({
+        name: 'Elias Gabriel',
+        cpf: '761.436.350-72',
+        phone_number: '71982740661',
+        address: 'Rua Manoel Camillo de Almeida, Alto Sobradinho, 108',
+      });
+
+      const [{ id: material_id }, { id: client_id }] = await Promise.all([
+        materialsRepository.save(material),
+        clientsRepository.save(client),
+      ]);
+
+      const contract = contractsRepository.create({
+        client_id,
+        delivery_price: 25,
+        daily_total_price: 2.8,
+      });
+
+      const newContract = await contractsRepository.save(contract);
+
+      const contractItem = contractItemsRepository.create({
+        contract_id: newContract.id,
+        material_id,
+        quantity: 2,
+        price_quantity_daily: 2.8,
+      });
+
+      await contractItemsRepository.save(contractItem);
+
+      const response = await request(app)
+        .put(`/contracts/${newContract.id}/finish`)
+        .send({
+          collect_price: 15,
+        })
+        .set('Authorization', `Bearer ${token}`);
+
+      const finishedContract = await contractsRepository.findOne(
+        newContract.id,
+      );
+
+      expect(response.status).toBe(204);
+      expect(finishedContract?.collect_price).toBe(15);
+      expect(finishedContract?.collect_at).toBeTruthy();
+    });
+
+    it('should not be able to finish one contract that does not exists', async () => {
+      const token = await getToken();
+
+      const response = await request(app)
+        .put('/contracts/2ec127f2-23b1-47fc-b6ec-cda50cb3a8ce/finish')
+        .send({
+          collect_price: 15,
+        })
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject(
+        expect.objectContaining({
+          status: 'error',
+          message: 'Contract does not exists',
+        }),
+      );
+    });
+  });
 });
