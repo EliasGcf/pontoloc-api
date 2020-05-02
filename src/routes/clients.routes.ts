@@ -1,9 +1,15 @@
 import { getRepository, IsNull, Not } from 'typeorm';
 import { Router } from 'express';
 
+import validateClientCreate from '@validators/ClientCreate';
+import validateClientUpdate from '@validators/ClientUpdate';
+import validateClientList from '@validators/ClientList';
+import validateMustBeUUID from '@validators/MustBeUUID';
+
 import CreateClientService from '@services/CreateClientService';
 import UpdateClientService from '@services/UpdateClientService';
 import DeleteClientService from '@services/DeleteClientService';
+
 import Client from '@models/Client';
 import AppError from '@errors/AppError';
 
@@ -11,7 +17,9 @@ import clientExistsMiddleware from '@middlewares/clientExists';
 
 const clientsRouter = Router();
 
-clientsRouter.post('/', async (req, res) => {
+clientsRouter.use('/:id', validateMustBeUUID);
+
+clientsRouter.post('/', validateClientCreate, async (req, res) => {
   const { name, cpf, phone_number, address } = req.body;
 
   const createClient = new CreateClientService();
@@ -26,7 +34,7 @@ clientsRouter.post('/', async (req, res) => {
   return res.status(201).json(client);
 });
 
-clientsRouter.get('/', async (req, res) => {
+clientsRouter.get('/', validateClientList, async (req, res) => {
   const { deleted } = req.query;
 
   const clientsRepository = getRepository(Client);
@@ -42,18 +50,16 @@ clientsRouter.get('/', async (req, res) => {
 });
 
 clientsRouter.get('/:id', async (req, res) => {
-  const {
-    client: { id },
-  } = req;
   const clientsRepository = getRepository(Client);
 
-  const client = await clientsRepository.findOne(id, {
+  const client = await clientsRepository.findOne(req.params.id, {
     relations: [
       'contracts',
       'contracts.contract_items',
       'contracts.contract_items.material',
     ],
-    select: ['id', 'name', 'cpf', 'phone_number', 'address'],
+    select: ['id', 'name', 'cpf', 'phone_number', 'address', 'deleted_at'],
+    withDeleted: true,
   });
 
   if (!client) {
@@ -63,7 +69,7 @@ clientsRouter.get('/:id', async (req, res) => {
   return res.json(client);
 });
 
-clientsRouter.put('/:id', async (req, res) => {
+clientsRouter.put('/:id', validateClientUpdate, async (req, res) => {
   const { name, cpf, phone_number, address } = req.body;
 
   const updateClient = new UpdateClientService();

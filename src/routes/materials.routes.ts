@@ -1,14 +1,19 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 
+import validateMaterialCraete from '@validators/MaterialCraete';
+import validateMaterialUpdate from '@validators/MaterialUpdate';
+import validateMustBeUUID from '@validators/MustBeUUID';
+
 import CreateMaterialService from '@services/CreateMaterialService';
 import UpdateMaterialService from '@services/UpdateMaterialService';
+
 import AppError from '@errors/AppError';
 import Material from '@models/Material';
 
 const materialsRouter = Router();
 
-materialsRouter.use('/:id', async (req, res, next) => {
+materialsRouter.use('/:id', validateMustBeUUID, async (req, res, next) => {
   const materialsRepository = getRepository(Material);
   const { id } = req.params;
 
@@ -23,7 +28,7 @@ materialsRouter.use('/:id', async (req, res, next) => {
   return next();
 });
 
-materialsRouter.post('/', async (req, res) => {
+materialsRouter.post('/', validateMaterialCraete, async (req, res) => {
   const { name, daily_price } = req.body;
 
   const createMaterial = new CreateMaterialService();
@@ -51,7 +56,7 @@ materialsRouter.get('/:id', async (req, res) => {
   return res.json(req.material);
 });
 
-materialsRouter.put('/:id', async (req, res) => {
+materialsRouter.put('/:id', validateMaterialUpdate, async (req, res) => {
   const { daily_price } = req.body;
 
   const updateMaterial = new UpdateMaterialService();

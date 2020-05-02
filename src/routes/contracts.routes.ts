@@ -1,6 +1,9 @@
 import { getRepository } from 'typeorm';
-
 import { Router } from 'express';
+
+import validateContractCreate from '@validators/ContractCreate';
+import validateContractFinish from '@validators/ContractFinish';
+import validateMustBeUUID from '@validators/MustBeUUID';
 
 import AppError from '@errors/AppError';
 import Contract from '@models/Contract';
@@ -10,8 +13,10 @@ import FinishContractService from '@services/FinishContractService';
 
 const contractsRouter = Router();
 
-contractsRouter.post('/', async (req, res) => {
-  const { client_id, materials, delivery_price } = req.body;
+contractsRouter.use('/:id', validateMustBeUUID);
+
+contractsRouter.post('/', validateContractCreate, async (req, res) => {
+  const { client_id, materials, delivery_price = 0 } = req.body;
 
   const createContract = new CreateContractService();
 
@@ -47,23 +52,18 @@ contractsRouter.get('/', async (req, res) => {
 contractsRouter.get('/:id', async (req, res) => {
   const contractsRepository = getRepository(Contract);
 
-  const contract = await contractsRepository
-    .findOne(req.params.id, {
-      relations: ['client', 'contract_items', 'contract_items.material'],
-      select: [
-        'id',
-        'client_id',
-        'daily_total_price',
-        'delivery_price',
-        'collect_price',
-        'final_price',
-        'collect_at',
-      ],
-    })
-    .catch(() => {
-      throw new AppError('Contract does not exists');
-    });
-
+  const contract = await contractsRepository.findOne(req.params.id, {
+    relations: ['client', 'contract_items', 'contract_items.material'],
+    select: [
+      'id',
+      'client_id',
+      'daily_total_price',
+      'delivery_price',
+      'collect_price',
+      'final_price',
+      'collect_at',
+    ],
+  });
   if (!contract) {
     throw new AppError('Contract does not exists');
   }
@@ -71,8 +71,8 @@ contractsRouter.get('/:id', async (req, res) => {
   return res.json(contract);
 });
 
-contractsRouter.put('/:id/finish', async (req, res) => {
-  const { collect_price } = req.body;
+contractsRouter.put('/:id/finish', validateContractFinish, async (req, res) => {
+  const { collect_price = 0 } = req.body;
 
   const finishContract = new FinishContractService();
 

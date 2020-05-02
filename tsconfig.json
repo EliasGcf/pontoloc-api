@@ -13,7 +13,8 @@
       "@repositories/*": ["repositories/*"],
       "@services/*": ["services/*"],
       "@config/*": ["config/*"],
-      "@middlewares/*": ["middlewares/*"]
+      "@middlewares/*": ["middlewares/*"],
+      "@validators/*": ["validators/*"]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,

@@ -13,12 +13,7 @@ class FinishContractService {
   public async execute({ contract_id, collect_price }: Request): Promise<void> {
     const contractsRepository = getRepository(Contract);
 
-    const contract = await contractsRepository
-      .findOne(contract_id)
-      .catch(() => {
-        throw new AppError('Contract does not exists');
-      });
-
+    const contract = await contractsRepository.findOne(contract_id);
     if (!contract) {
       throw new AppError('Contract does not exists');
     }
