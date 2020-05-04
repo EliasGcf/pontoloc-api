@@ -45,9 +45,9 @@
 
 ## 👨🏻‍💻 About the project
 
-PontoLoc is a micro enterprise who rent construction materials. Thinking of helping, I developed this API to enable the company to have a simple and easy way to control and visualize the rent of its materials.
+PontoLoc is a micro enterprise that rents construction materials. Thinking about helping them, I developed this API so the company can have a simple and easy way to control and visualize the rent of its materials.
 
-The company can create your clients and materials, also, make contracts with one client, a list of material and quantity, price of delivery or collect and when finished the rent, calculate the final price.
+The company can create lists and contracts of clients, lists of materials and quantity of each, price of delivery or collect and when the rent period is over, calculate the final price.
 
 ## 🚀 Technologies
 
