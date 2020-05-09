@@ -47,11 +47,11 @@
 
 PontoLoc is a micro enterprise that rents construction materials. Thinking about helping them, I developed this API so the company can have a simple and easy way to control and visualize the rent of its materials.
 
-The company can create lists and contracts of clients, lists of materials and quantity of each, price of delivery or collect and when the rent period is over, calculate the final price.
+The company can create lists and contracts of clients, lists of materials with their respective quantities, delivery and collection fee and calculate the final price when the rental period is end.
 
 ## 🚀 Technologies
 
-Technologies what I used to desenvolve this api
+Technologies that I used to develop this api
 
 - [Node.js](https://nodejs.org/en/)
 - [TypeScript](https://www.typescriptlang.org/)
