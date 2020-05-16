@@ -8,13 +8,9 @@
     "strictPropertyInitialization": false,
     "baseUrl": "./src",
     "paths": {
-      "@errors/*": ["errors/*"],
-      "@models/*": ["models/*"],
-      "@repositories/*": ["repositories/*"],
-      "@services/*": ["services/*"],
+      "@modules/*": ["modules/*"],
       "@config/*": ["config/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@validators/*": ["validators/*"]
+      "@shared/*": ["shared/*"]
     },
     "esModuleInterop": true,
     "experimentalDecorators": true,

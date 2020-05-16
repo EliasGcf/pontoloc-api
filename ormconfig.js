@@ -8,15 +8,15 @@ module.exports = {
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   seeds: [
-    './src/database/seeds/*.seed.ts'
+    './src/shared/infra/typeorm/seeds/*.ts'
   ],
   entities: [
-    './src/models/*.ts'
+    './src/modules/**/infra/typeorm/entities/*.ts'
   ],
   migrations: [
-    './src/database/migrations/*.ts'
+    './src/shared/infra/typeorm/migrations/*.ts'
   ],
   cli: {
-    'migrationsDir': './src/database/migrations'
+    'migrationsDir': './src/shared/infra/typeorm/migrations'
   }
 }

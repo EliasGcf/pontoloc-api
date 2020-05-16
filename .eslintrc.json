@@ -27,7 +27,9 @@
     "prettier/prettier": "error",
     "@typescript-eslint/camelcase": "off",
     "class-methods-use-this": "off",
+    "no-useless-constructor": "off",
     "no-param-reassign": "off",
+    "@typescript-eslint/interface-name-prefix": ["error", { "prefixWithI": "always" }],
     "@typescript-eslint/no-unused-vars": ["error", {
       "argsIgnorePattern": "_"
     }],
