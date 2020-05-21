@@ -24,14 +24,14 @@ export default class ContractsController {
   public async index(req: Request, res: Response): Promise<Response> {
     const { page = 1 } = req.query;
 
-    const listContractsByCreatedDescOrderWithClient = container.resolve(
+    const listContractsByCreatedDescOrderWithClientAndPagination = container.resolve(
       ListContractsByCreatedDescOrderWithClientAndPaginationService,
     );
 
     const {
       contracts,
       count,
-    } = await listContractsByCreatedDescOrderWithClient.execute({
+    } = await listContractsByCreatedDescOrderWithClientAndPagination.execute({
       page: Number(page),
     });
 

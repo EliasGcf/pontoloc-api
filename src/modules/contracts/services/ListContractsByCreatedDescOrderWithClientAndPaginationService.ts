@@ -24,9 +24,12 @@ class ListContractsByCreatedDescOrderWithClientAndPaginationService {
     const {
       contracts,
       count,
-    } = await this.contractsRepository.findAllInCreatedDescOrderWithClientAndPagination(
-      { page },
-    );
+    } = await this.contractsRepository.findAllAndCountWithOptions({
+      page,
+      order: 'DESC',
+      order_element: 'created_at',
+      relations: ['client'],
+    });
 
     return { contracts, count };
   }
