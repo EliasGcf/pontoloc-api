@@ -36,6 +36,7 @@ export default class ContractsController {
     });
 
     res.header('X-Total-Count', `${count}`);
+    res.header('Access-Control-Expose-Headers', 'X-Total-Count');
 
     return res.json(contracts);
   }

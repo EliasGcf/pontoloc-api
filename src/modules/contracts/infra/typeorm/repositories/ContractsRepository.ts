@@ -56,7 +56,7 @@ export default class ContarctsRepository implements IContractsRepository {
       relations: ['client'],
       order: { created_at: 'DESC' },
       take: 7,
-      skip: (page - 1) * 5,
+      skip: (page - 1) * 7,
     });
 
     return { contracts, count };
