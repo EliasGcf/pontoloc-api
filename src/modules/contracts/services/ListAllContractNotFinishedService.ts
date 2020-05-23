@@ -6,6 +6,7 @@ import Contract from '@modules/contracts/infra/typeorm/entities/Contract';
 
 interface IRequest {
   page: number;
+  name: string;
 }
 
 interface IResponse {
@@ -20,12 +21,13 @@ class ListAllContractNotFinishedService {
     private contractsRepository: IContractsRepository,
   ) {}
 
-  public async execute({ page }: IRequest): Promise<IResponse> {
+  public async execute({ page, name }: IRequest): Promise<IResponse> {
     const {
       contracts,
       count,
     } = await this.contractsRepository.findAllNotFinished({
       page,
+      name,
     });
 
     return { contracts, count };

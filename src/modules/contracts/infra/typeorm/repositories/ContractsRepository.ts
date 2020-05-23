@@ -48,14 +48,28 @@ export default class ContarctsRepository implements IContractsRepository {
   }
 
   public async findAllNotFinished({
-    page = 1,
+    page,
+    name,
   }: IFindAllNotFinishedDTO): Promise<IResponseIFindAllNotFinished> {
-    const [contracts, count] = await this.ormRepository.findAndCount({
-      relations: ['client'],
-      order: { number: 'DESC' },
-      take: 7,
-      skip: (page - 1) * 7,
-    });
+    // const [contracts, count] = await this.ormRepository.findAndCount({
+    //   relations: ['client'],
+    //   order: { number: 'DESC' },
+    //   take: 7,
+    //   skip: (page - 1) * 7,
+    // });
+
+    const query = this.ormRepository
+      .createQueryBuilder('contracts')
+      .innerJoinAndSelect('contracts.client', 'client')
+      .take(7)
+      .skip((page - 1) * 7)
+      .orderBy('contracts.number', 'DESC');
+
+    if (name) {
+      query.where('client.name ILIKE :name', { name: `%${name}%` });
+    }
+
+    const [contracts, count] = await query.getManyAndCount();
 
     return { contracts, count };
   }

@@ -22,7 +22,7 @@ export default class ContractsController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
-    const { page = 1 } = req.query;
+    const { page = 1, name = '' } = req.query;
 
     const listAllContractNotFinished = container.resolve(
       ListAllContractNotFinishedService,
@@ -30,6 +30,7 @@ export default class ContractsController {
 
     const { contracts, count } = await listAllContractNotFinished.execute({
       page: Number(page),
+      name: String(name),
     });
 
     res.header('X-Total-Count', `${count}`);
