@@ -10,8 +10,8 @@
     "dev:resetDatabase": "ts-node-dev ./node_modules/typeorm/cli.js schema:drop && ts-node-dev ./node_modules/typeorm/cli.js migration:run",
     "test": "cross-env NODE_ENV=test jest -i",
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "seed:config": "ts-node-dev ./node_modules/typeorm-seeding/dist/cli.js config",
-    "seed:run": "ts-node-dev ./node_modules/typeorm-seeding/dist/cli.js seed"
+    "seed:config": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config",
+    "seed:run": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed"
   },
   "dependencies": {
     "@types/supertest": "^2.0.8",
