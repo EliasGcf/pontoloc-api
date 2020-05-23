@@ -7,6 +7,7 @@ module.exports = {
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  logging: true,
   seeds: [
     './src/shared/infra/typeorm/seeds/*.ts'
   ],

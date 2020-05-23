@@ -38,13 +38,13 @@ export default class ClientsRepository implements IClientsRepository {
 
   public async findByCPFWithDeleted(
     cpf: string,
-    { execept_client_id }: IFindByCPFWithDeletedDTO,
+    options?: IFindByCPFWithDeletedDTO,
   ): Promise<Client | undefined> {
     let client: Client | undefined;
 
-    if (execept_client_id) {
+    if (options?.execept_client_id) {
       client = await this.ormRepository.findOne({
-        where: { cpf, id: Not(execept_client_id) },
+        where: { cpf, id: Not(options.execept_client_id) },
         withDeleted: true,
       });
     } else {
