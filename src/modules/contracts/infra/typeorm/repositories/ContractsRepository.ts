@@ -1,13 +1,13 @@
 import { getRepository, Repository } from 'typeorm';
 
 import ICreateContractDTO from '@modules/contracts/dtos/ICreateContractDTO';
-import IFindAllAndCountWithOptionsDTO from '@modules/contracts/dtos/IFindAllAndCountWithOptionsDTO';
+import IFindAllNotFinishedDTO from '@modules/contracts/dtos/IFindAllNotFinishedDTO';
 
 import IContractsRepository from '@modules/contracts/repositories/IContractsRepository';
 
 import Contract from '@modules/contracts/infra/typeorm/entities/Contract';
 
-interface IResponseFindAllAndCountWithOptions {
+interface IResponseIFindAllNotFinished {
   contracts: Contract[];
   count: number;
 }
@@ -47,17 +47,12 @@ export default class ContarctsRepository implements IContractsRepository {
     return contract;
   }
 
-  public async findAllAndCountWithOptions({
+  public async findAllNotFinished({
     page = 1,
-    order,
-    order_element,
-    relations,
-  }: IFindAllAndCountWithOptionsDTO): Promise<
-    IResponseFindAllAndCountWithOptions
-  > {
+  }: IFindAllNotFinishedDTO): Promise<IResponseIFindAllNotFinished> {
     const [contracts, count] = await this.ormRepository.findAndCount({
-      relations,
-      order: { [order_element]: order },
+      relations: ['client'],
+      order: { number: 'DESC' },
       take: 7,
       skip: (page - 1) * 7,
     });

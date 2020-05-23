@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 
 import CreateContractService from '@modules/contracts/services/CreateContractService';
 import FinishContractService from '@modules/contracts/services/FinishContractService';
-import ListContractsByCreatedDescOrderWithClientAndPaginationService from '@modules/contracts/services/ListContractsByCreatedDescOrderWithClientAndPaginationService';
+import ListAllContractNotFinishedService from '@modules/contracts/services/ListAllContractNotFinishedService';
 import ListContractWithAllRelationsService from '@modules/contracts/services/ListContractWithAllRelationsService';
 
 export default class ContractsController {
@@ -24,14 +24,11 @@ export default class ContractsController {
   public async index(req: Request, res: Response): Promise<Response> {
     const { page = 1 } = req.query;
 
-    const listContractsByCreatedDescOrderWithClientAndPagination = container.resolve(
-      ListContractsByCreatedDescOrderWithClientAndPaginationService,
+    const listAllContractNotFinished = container.resolve(
+      ListAllContractNotFinishedService,
     );
 
-    const {
-      contracts,
-      count,
-    } = await listContractsByCreatedDescOrderWithClientAndPagination.execute({
+    const { contracts, count } = await listAllContractNotFinished.execute({
       page: Number(page),
     });
 

@@ -14,7 +14,7 @@ interface IResponse {
 }
 
 @injectable()
-class ListContractsByCreatedDescOrderWithClientAndPaginationService {
+class ListAllContractNotFinishedService {
   constructor(
     @inject('ContractsRepository')
     private contractsRepository: IContractsRepository,
@@ -24,15 +24,12 @@ class ListContractsByCreatedDescOrderWithClientAndPaginationService {
     const {
       contracts,
       count,
-    } = await this.contractsRepository.findAllAndCountWithOptions({
+    } = await this.contractsRepository.findAllNotFinished({
       page,
-      order: 'DESC',
-      order_element: 'created_at',
-      relations: ['client'],
     });
 
     return { contracts, count };
   }
 }
 
-export default ListContractsByCreatedDescOrderWithClientAndPaginationService;
+export default ListAllContractNotFinishedService;

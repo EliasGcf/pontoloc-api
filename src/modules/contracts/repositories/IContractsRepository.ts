@@ -1,16 +1,16 @@
 import Contract from '@modules/contracts/infra/typeorm/entities/Contract';
 import ICreateContractDTO from '@modules/contracts/dtos/ICreateContractDTO';
-import IFindAllAndCountWithOptionsDTO from '@modules/contracts/dtos/IFindAllAndCountWithOptionsDTO';
+import IFindAllNotFinishedDTO from '@modules/contracts/dtos/IFindAllNotFinishedDTO';
 
-interface IResponseFindAllAndCountWithOptions {
+interface IResponseIFindAllNotFinished {
   contracts: Contract[];
   count: number;
 }
 
 export default interface IContractsRepository {
-  findAllAndCountWithOptions(
-    data: IFindAllAndCountWithOptionsDTO,
-  ): Promise<IResponseFindAllAndCountWithOptions>;
+  findAllNotFinished(
+    data: IFindAllNotFinishedDTO,
+  ): Promise<IResponseIFindAllNotFinished>;
   findByIdWithAllRelations(id: string): Promise<Contract | undefined>;
   findById(id: string): Promise<Contract | undefined>;
   create(data: ICreateContractDTO): Promise<Contract>;
