@@ -20,6 +20,13 @@ export default class CreateContracts1586980394440
             default: 'uuid_generate_v4()',
           },
           {
+            name: 'number',
+            type: 'int',
+            isUnique: true,
+            isGenerated: true,
+            generationStrategy: 'increment',
+          },
+          {
             name: 'client_id',
             type: 'uuid',
           },

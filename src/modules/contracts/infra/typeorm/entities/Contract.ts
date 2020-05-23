@@ -17,6 +17,13 @@ class Contract {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({
+    generated: 'increment',
+    type: 'int',
+    readonly: true,
+  })
+  number: number;
+
   @Column()
   client_id: string;
 
