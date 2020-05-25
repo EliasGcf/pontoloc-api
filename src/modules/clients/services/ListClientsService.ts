@@ -5,6 +5,13 @@ import Client from '@modules/clients/infra/typeorm/entities/Client';
 
 interface IRequest {
   deleted: boolean;
+  page: number;
+  name: string;
+}
+
+interface IResponse {
+  clients: Client[];
+  count: number;
 }
 
 @injectable()
@@ -14,10 +21,17 @@ class ListClientsService {
     private clientsRepository: IClientsRepository,
   ) {}
 
-  public async execute({ deleted }: IRequest): Promise<Client[]> {
-    const clients = await this.clientsRepository.findAll({ deleted });
+  public async execute({ deleted, name, page }: IRequest): Promise<IResponse> {
+    const {
+      clients,
+      count,
+    } = await this.clientsRepository.findAllWithPaginationAndSearch({
+      deleted,
+      page,
+      name,
+    });
 
-    return clients;
+    return { clients, count };
   }
 }
 

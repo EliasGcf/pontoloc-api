@@ -22,11 +22,18 @@ export default class ClientsController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
-    const { deleted } = req.query;
+    const { deleted = false, name = '', page = 1 } = req.query;
 
     const listClients = container.resolve(ListClientsService);
 
-    const clients = await listClients.execute({ deleted: !!deleted });
+    const { clients, count } = await listClients.execute({
+      deleted: !!deleted,
+      name: String(name),
+      page: Number(page),
+    });
+
+    res.header('X-Total-Count', `${count}`);
+    res.header('Access-Control-Expose-Headers', 'X-Total-Count');
 
     return res.json(clients);
   }

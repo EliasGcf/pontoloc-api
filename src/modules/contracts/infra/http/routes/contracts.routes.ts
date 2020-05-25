@@ -4,6 +4,7 @@ import ContractsController from '@modules/contracts/infra/http/controllers/Contr
 
 import validateContractCreate from '@modules/contracts/infra/http/validators/ContractCreate';
 import validateContractFinish from '@modules/contracts/infra/http/validators/ContractFinish';
+import validateContractList from '@modules/contracts/infra/http/validators/ContractList';
 import IDParamsMustBeUUID from '@shared/infra/http/validators/IDParamsMustBeUUID';
 
 const contractsRouter = Router();
@@ -13,7 +14,7 @@ contractsRouter.use('/:id', IDParamsMustBeUUID);
 
 contractsRouter.post('/', validateContractCreate, contractsController.create);
 
-contractsRouter.get('/', contractsController.index);
+contractsRouter.get('/', validateContractList, contractsController.index);
 
 contractsRouter.get('/:id', contractsController.show);
 

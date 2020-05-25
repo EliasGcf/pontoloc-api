@@ -6,6 +6,12 @@ import IFindByCPFWithDeletedDTO from '@modules/clients/dtos/IFindByCPFWithDelete
 import IFindAllDTO from '@modules/clients/dtos/IFindAllDTO';
 
 import Client from '@modules/clients/infra/typeorm/entities/Client';
+import IFindAllWithPaginationAndSearchDTO from '@modules/clients/dtos/IFindAllWithPaginationAndSearchDTO';
+
+interface IResponseFindAllWithPaginationAndSearch {
+  clients: Client[];
+  count: number;
+}
 
 export default class ClientsRepository implements IClientsRepository {
   private ormRepository: Repository<Client>;
@@ -67,6 +73,40 @@ export default class ClientsRepository implements IClientsRepository {
     const clients = await this.ormRepository.find({ withDeleted: deleted });
 
     return clients;
+  }
+
+  public async findAllWithPaginationAndSearch(
+    data: IFindAllWithPaginationAndSearchDTO,
+  ): Promise<IResponseFindAllWithPaginationAndSearch> {
+    const { deleted, name, page } = data;
+
+    // const [clients, count] = await this.ormRepository.findAndCount({
+    //   where: { name: Like(`%${name}%`) },
+    //   withDeleted: deleted,
+    //   take: 7,
+    //   skip: (page - 1) * 7,
+    // });
+
+    const query = this.ormRepository
+      .createQueryBuilder('clients')
+      .take(7)
+      .skip((page - 1) * 7)
+      .orderBy('created_at', 'DESC');
+
+    if (name) {
+      query.where('name ILIKE :name', { name: `%${name}%` });
+    }
+
+    if (deleted) {
+      query.withDeleted().andWhere('deleted_at IS NOT NULL');
+    }
+
+    const [clients, count] = await query.getManyAndCount();
+
+    return {
+      clients,
+      count,
+    };
   }
 
   public async softDeleteById(id: string): Promise<void> {
