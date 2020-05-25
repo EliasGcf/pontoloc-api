@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import 'dotenv/config';
-import { errors } from 'celebrate';
-import express, { Request, Response, NextFunction } from 'express';
+import { errors as celebrateErrors } from 'celebrate';
+import express, { Request, Response, NextFunction, Express } from 'express';
 import cors from 'cors';
 import 'express-async-errors';
 
@@ -13,27 +13,47 @@ import createConnection from '@shared/infra/typeorm';
 import routes from './routes';
 
 createConnection();
-const app = express();
 
-app.use(cors());
-app.use(express.json());
-app.use(routes);
-app.use(errors());
+class App {
+  public server: Express;
 
-app.use((err: Error, req: Request, res: Response, _: NextFunction) => {
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      status: 'error',
-      message: err.message,
-    });
+  constructor() {
+    this.server = express();
+
+    this.middlewares();
+    this.routes();
+    this.errors();
   }
 
-  console.log(err);
+  middlewares(): void {
+    this.server.use(cors());
+    this.server.use(express.json());
+  }
 
-  return res.status(500).json({
-    status: 'error',
-    message: 'Internal server error',
-  });
-});
+  routes(): void {
+    this.server.use(routes);
+  }
 
-export default app;
+  errors(): void {
+    this.server.use(celebrateErrors());
+    this.server.use(
+      (err: Error, req: Request, res: Response, _: NextFunction) => {
+        if (err instanceof AppError) {
+          return res.status(err.statusCode).json({
+            status: 'error',
+            message: err.message,
+          });
+        }
+        // eslint-disable-next-line
+        console.log(err);
+
+        return res.status(500).json({
+          status: 'error',
+          message: 'Internal server error',
+        });
+      },
+    );
+  }
+}
+
+export default new App().server;
