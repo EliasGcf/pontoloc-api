@@ -4,6 +4,7 @@ import MaterialsController from '@modules/materials/infra/http/controllers/Mater
 
 import validateMaterialCraete from '@modules/materials/infra/http/validators/MaterialCraete';
 import validateMaterialUpdate from '@modules/materials/infra/http/validators/MaterialUpdate';
+import validateMaterialList from '@modules/materials/infra/http/validators/MaterialList';
 import IDParamsMustBeUUID from '@shared/infra/http/validators/IDParamsMustBeUUID';
 
 const materialsRouter = Router();
@@ -13,16 +14,7 @@ materialsRouter.use('/:id', IDParamsMustBeUUID);
 
 materialsRouter.post('/', validateMaterialCraete, materialsController.create);
 
-// materialsRouter.get('/', async (req, res) => {
-//   const materialsRepository = getRepository(Material);
-
-//   const materials = await materialsRepository.find({
-//     order: { name: 'ASC' },
-//     select: ['id', 'name', 'daily_price'],
-//   });
-
-//   return res.json(materials);
-// });
+materialsRouter.get('/', validateMaterialList, materialsController.index);
 
 // materialsRouter.get('/:id', async (req, res) => {
 //   delete req.material.created_at;
