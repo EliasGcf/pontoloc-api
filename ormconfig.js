@@ -18,6 +18,6 @@ module.exports = {
     './src/shared/infra/typeorm/migrations/*.ts'
   ],
   cli: {
-    'migrationsDir': './src/shared/infra/typeorm/migrations'
+    migrationsDir: './src/shared/infra/typeorm/migrations'
   }
 }
