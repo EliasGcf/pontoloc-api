@@ -17,7 +17,7 @@ export default class MaterialsController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
-    const { page = 1, name = '' } = req.query;
+    const { page, name } = req.query;
     const listMaterials = container.resolve(ListMaterialsService);
 
     const { materials, count } = await listMaterials.execute({

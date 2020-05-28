@@ -22,7 +22,7 @@ export default class ClientsController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
-    const { deleted = false, name = '', page = 1 } = req.query;
+    const { deleted, name, page } = req.query;
 
     const listClients = container.resolve(ListClientsService);
 
