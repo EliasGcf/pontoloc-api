@@ -80,18 +80,11 @@ export default class ClientsRepository implements IClientsRepository {
   ): Promise<IResponseFindAllWithPaginationAndSearch> {
     const { deleted, name, page } = data;
 
-    // const [clients, count] = await this.ormRepository.findAndCount({
-    //   where: { name: Like(`%${name}%`) },
-    //   withDeleted: deleted,
-    //   take: 7,
-    //   skip: (page - 1) * 7,
-    // });
-
     const query = this.ormRepository
       .createQueryBuilder('clients')
       .take(7)
       .skip((page - 1) * 7)
-      .orderBy('created_at', 'DESC');
+      .orderBy('clients.created_at', 'DESC');
 
     if (name) {
       query.where('name ILIKE :name', { name: `%${name}%` });

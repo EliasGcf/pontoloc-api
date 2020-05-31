@@ -16,7 +16,7 @@ class Client {
   id: string;
 
   @OneToMany(() => Contract, contract => contract.client)
-  contracts: Contract;
+  contracts: Contract[];
 
   @Column()
   name: string;
