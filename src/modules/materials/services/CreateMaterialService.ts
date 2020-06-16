@@ -27,7 +27,7 @@ class CreateMaterialService {
     }
 
     const material = await this.materialsRepository.create({
-      name: name.toLowerCase(),
+      name,
       daily_price,
     });
 
