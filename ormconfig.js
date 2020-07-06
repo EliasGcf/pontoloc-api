@@ -1,23 +1,34 @@
 require('dotenv/config');
 
-module.exports = {
+const devConfig = {
+  name: 'default',
   type: 'postgres',
   host: process.env.DB_HOST,
-  port: '5432',
+  port: 5432,
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  logging: true,
-  seeds: [
-    './src/shared/infra/typeorm/seeds/*.ts'
-  ],
-  entities: [
-    './src/modules/**/infra/typeorm/entities/*.ts'
-  ],
-  migrations: [
-    './src/shared/infra/typeorm/migrations/*.ts'
-  ],
+  entities: ['./src/modules/**/infra/typeorm/entities/*.ts'],
+  migrations: ['./src/shared/infra/typeorm/migrations/*.ts'],
   cli: {
-    migrationsDir: './src/shared/infra/typeorm/migrations'
-  }
-}
+    migrationsDir: './src/shared/infra/typeorm/migrations',
+  },
+};
+
+const prodConfig = {
+  name: 'default',
+  type: 'postgres',
+  host: process.env.DB_HOST,
+  port: 5432,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  entities: ['./dist/modules/**/infra/typeorm/entities/*.js'],
+  migrations: ['./dist/shared/infra/typeorm/migrations/*.js'],
+  cli: {
+    migrationsDir: './dist/shared/infra/typeorm/migrations',
+  },
+};
+
+module.exports =
+  process.env.NODE_ENV === 'development' ? devConfig : prodConfig;
