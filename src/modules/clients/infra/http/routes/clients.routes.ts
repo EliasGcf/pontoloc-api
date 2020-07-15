@@ -37,6 +37,7 @@ clientsRouter.get('/', validateClientList, clientsController.index);
 
 //   return res.json(client);
 // });
+clientsRouter.get('/:id', clientsController.show);
 
 clientsRouter.put('/:id', validateClientUpdate, clientsController.update);
 clientsRouter.delete('/soft/:id', softDeleteController.delete);

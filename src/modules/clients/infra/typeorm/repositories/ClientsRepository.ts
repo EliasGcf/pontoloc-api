@@ -64,9 +64,17 @@ export default class ClientsRepository implements IClientsRepository {
   }
 
   public async findById(id: string): Promise<Client | undefined> {
-    const cliente = await this.ormRepository.findOne(id);
+    const client = await this.ormRepository.findOne(id, {
+      relations: [
+        'contracts',
+        'contracts.contract_items',
+        'contracts.contract_items.material',
+      ],
+      select: ['id', 'name', 'cpf', 'phone_number', 'address', 'deleted_at'],
+      withDeleted: true,
+    });
 
-    return cliente;
+    return client;
   }
 
   public async findAll({ deleted }: IFindAllDTO): Promise<Client[]> {

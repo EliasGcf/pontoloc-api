@@ -11,15 +11,21 @@ interface IResponseFindAllWithPaginationAndSearch {
 
 export default interface IClientsRepository {
   findAll(options: IFindAllDTO): Promise<Client[]>;
+
   findById(id: string): Promise<Client | undefined>;
+
   findAllWithPaginationAndSearch(
     data: IFindAllWithPaginationAndSearchDTO,
   ): Promise<IResponseFindAllWithPaginationAndSearch>;
+
   findByCPFWithDeleted(
     cpf: string,
     options?: IFindByCPFWithDeletedDTO,
   ): Promise<Client | undefined>;
+
   create(data: ICreateClientDTO): Promise<Client>;
+
   softDeleteById(id: string): Promise<void>;
+
   save(client: Client): Promise<Client>;
 }

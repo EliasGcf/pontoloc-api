@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import CreateClientService from '@modules/clients/services/CreateClientService';
 import UpdateClientService from '@modules/clients/services/UpdateClientService';
 import ListClientsService from '@modules/clients/services/ListClientsService';
+import ShowClientService from '@modules/clients/services/ShowClientService';
 
 export default class ClientsController {
   public async create(req: Request, res: Response): Promise<Response> {
@@ -36,6 +37,16 @@ export default class ClientsController {
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
 
     return res.json(clients);
+  }
+
+  public async show(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+
+    const showClient = container.resolve(ShowClientService);
+
+    const client = await showClient.execute({ id });
+
+    return res.json(client);
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
