@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import CreateMaterialService from '@modules/materials/services/CreateMaterialService';
 import UpdateMaterialService from '@modules/materials/services/UpdateMaterialService';
 import ListMaterialsService from '@modules/materials/services/ListMaterialsService';
+import ShowMaterialService from '@modules/materials/services/ShowMaterialService';
 
 export default class MaterialsController {
   public async create(req: Request, res: Response): Promise<Response> {
@@ -29,6 +30,16 @@ export default class MaterialsController {
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
 
     return res.json(materials);
+  }
+
+  public async show(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+
+    const showMaterial = container.resolve(ShowMaterialService);
+
+    const material = await showMaterial.execute({ id });
+
+    return res.json(material);
   }
 
   public async update(req: Request, res: Response): Promise<Response> {

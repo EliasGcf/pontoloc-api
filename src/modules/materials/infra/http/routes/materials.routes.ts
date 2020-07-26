@@ -16,12 +16,7 @@ materialsRouter.post('/', validateMaterialCraete, materialsController.create);
 
 materialsRouter.get('/', validateMaterialList, materialsController.index);
 
-// materialsRouter.get('/:id', async (req, res) => {
-//   delete req.material.created_at;
-//   delete req.material.updated_at;
-
-//   return res.json(req.material);
-// });
+materialsRouter.get('/:id', materialsController.show);
 
 materialsRouter.put('/:id', validateMaterialUpdate, materialsController.update);
 
