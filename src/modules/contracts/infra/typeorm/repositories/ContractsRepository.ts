@@ -1,13 +1,13 @@
 import { getRepository, Repository } from 'typeorm';
 
 import ICreateContractDTO from '@modules/contracts/dtos/ICreateContractDTO';
-import IFindAllNotFinishedDTO from '@modules/contracts/dtos/IFindAllNotFinishedDTO';
+import IFilterOptionsDTO from '@modules/contracts/dtos/IFilterOptionsDTO';
 
 import IContractsRepository from '@modules/contracts/repositories/IContractsRepository';
 
 import Contract from '@modules/contracts/infra/typeorm/entities/Contract';
 
-interface IResponseIFindAllNotFinished {
+interface IFindAllAndCountResponse {
   contracts: Contract[];
   count: number;
 }
@@ -47,10 +47,11 @@ export default class ContarctsRepository implements IContractsRepository {
     return contract;
   }
 
-  public async findAllNotFinished({
+  public async findAllWithFilterOptions({
     page,
     name,
-  }: IFindAllNotFinishedDTO): Promise<IResponseIFindAllNotFinished> {
+    finished,
+  }: IFilterOptionsDTO): Promise<IFindAllAndCountResponse> {
     // const [contracts, count] = await this.ormRepository.findAndCount({
     //   relations: ['client'],
     //   order: { number: 'DESC' },
@@ -61,7 +62,7 @@ export default class ContarctsRepository implements IContractsRepository {
     const query = this.ormRepository
       .createQueryBuilder('contracts')
       .innerJoinAndSelect('contracts.client', 'client')
-      .where('contracts.collect_at IS NULL')
+      .where(`contracts.collect_at ${finished ? 'IS NOT' : 'IS'} NULL`)
       .take(7)
       .skip((page - 1) * 7)
       .orderBy('contracts.number', 'DESC');

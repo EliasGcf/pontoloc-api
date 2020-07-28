@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 
 import CreateContractService from '@modules/contracts/services/CreateContractService';
 import FinishContractService from '@modules/contracts/services/FinishContractService';
-import ListAllContractNotFinishedService from '@modules/contracts/services/ListAllContractNotFinishedService';
+import ListAllContractWithFilterOptionsService from '@modules/contracts/services/ListAllContractWithFilterOptionsService';
 import ListContractWithAllRelationsService from '@modules/contracts/services/ListContractWithAllRelationsService';
 
 export default class ContractsController {
@@ -22,16 +22,19 @@ export default class ContractsController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
-    const { page, name } = req.query;
+    const { page, name, finished } = req.query;
 
-    const listAllContractNotFinished = container.resolve(
-      ListAllContractNotFinishedService,
+    const listAllContractWithFilterOptions = container.resolve(
+      ListAllContractWithFilterOptionsService,
     );
 
-    const { contracts, count } = await listAllContractNotFinished.execute({
-      page: Number(page),
-      name: String(name),
-    });
+    const { contracts, count } = await listAllContractWithFilterOptions.execute(
+      {
+        page: Number(page),
+        name: String(name),
+        finished: Boolean(finished),
+      },
+    );
 
     res.header('X-Total-Count', `${count}`);
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');

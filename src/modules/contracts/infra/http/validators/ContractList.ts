@@ -4,5 +4,6 @@ export default celebrate({
   [Segments.QUERY]: Joi.object().keys({
     page: Joi.number().default(1),
     name: Joi.string().default(''),
+    finished: Joi.boolean().default(false),
   }),
 });

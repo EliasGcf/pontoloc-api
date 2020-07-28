@@ -7,6 +7,7 @@ import Contract from '@modules/contracts/infra/typeorm/entities/Contract';
 interface IRequest {
   page: number;
   name: string;
+  finished: boolean;
 }
 
 interface IResponse {
@@ -15,23 +16,24 @@ interface IResponse {
 }
 
 @injectable()
-class ListAllContractNotFinishedService {
+class ListAllContractWithFilterOptionsService {
   constructor(
     @inject('ContractsRepository')
     private contractsRepository: IContractsRepository,
   ) {}
 
-  public async execute({ page, name }: IRequest): Promise<IResponse> {
+  public async execute({ page, name, finished }: IRequest): Promise<IResponse> {
     const {
       contracts,
       count,
-    } = await this.contractsRepository.findAllNotFinished({
+    } = await this.contractsRepository.findAllWithFilterOptions({
       page,
       name,
+      finished,
     });
 
     return { contracts, count };
   }
 }
 
-export default ListAllContractNotFinishedService;
+export default ListAllContractWithFilterOptionsService;
