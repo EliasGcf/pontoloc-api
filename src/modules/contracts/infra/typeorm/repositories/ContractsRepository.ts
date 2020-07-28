@@ -61,12 +61,13 @@ export default class ContarctsRepository implements IContractsRepository {
     const query = this.ormRepository
       .createQueryBuilder('contracts')
       .innerJoinAndSelect('contracts.client', 'client')
+      .where('contracts.collect_at IS NULL')
       .take(7)
       .skip((page - 1) * 7)
       .orderBy('contracts.number', 'DESC');
 
     if (name) {
-      query.where('client.name ILIKE :name', { name: `%${name}%` });
+      query.andWhere('client.name ILIKE :name', { name: `%${name}%` });
     }
 
     const [contracts, count] = await query.getManyAndCount();
